@@ -640,6 +640,39 @@
         </div>
     </div>
 
+    <!-- Модальное окно Limbo -->
+    <div id="limbo-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closeLimboModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-cyan-600 mb-6 italic">LIMBO 🎲</h2>
+            <p class="text-center text-gray-400 text-sm mb-4">Угадайте множитель!</p>
+            
+            <div class="bg-black/50 p-6 rounded-xl mb-6 text-center">
+                <p class="text-xs text-gray-500 mb-2">Целевой множитель</p>
+                <input type="number" id="limbo-target" placeholder="1.5" class="w-full p-4 rounded-2xl text-center font-black bg-black/70 border border-cyan-600/50 mb-2" min="1.01" max="100" step="0.01" value="2.0">
+                <p class="text-xs text-gray-400">Выигрыш: <span id="limbo-potential-win" class="text-cyan-400 font-black">x2.00</span></p>
+            </div>
+            
+            <input type="number" id="limbo-bet-amount" placeholder="СУММА СТАВКИ" class="bet-input" min="100">
+            
+            <div class="grid grid-cols-4 gap-2 mb-6">
+                <button onclick="setQuickBetLimbo(100)" class="quick-bet-btn">100</button>
+                <button onclick="setQuickBetLimbo(500)" class="quick-bet-btn">500</button>
+                <button onclick="setQuickBetLimbo(1000)" class="quick-bet-btn">1K</button>
+                <button onclick="setQuickBetLimbo(5000)" class="quick-bet-btn">5K</button>
+            </div>
+            
+            <button onclick="playLimbo()" class="blue-btn w-full py-4 rounded-2xl font-black">ИГРАТЬ</button>
+            
+            <div id="limbo-result" class="mt-4 hidden">
+                <div class="bg-black/50 p-4 rounded-xl">
+                    <p class="text-xs text-gray-500 mb-2">Выпавший множитель</p>
+                    <p id="limbo-result-multiplier" class="text-3xl font-black text-cyan-400">x0.00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Модальное окно ключа -->
     <div id="key-modal" class="fixed inset-0 z-[600] bg-black/98 flex items-center justify-center p-6 hidden">
         <div class="glass p-8 rounded-[40px] w-full max-w-sm text-center border-2 border-yellow-500">
@@ -780,6 +813,11 @@
                     <div class="game-icon">⚪</div>
                     <p class="text-[9px] font-black text-green-600 uppercase mb-2 italic">Plinko</p>
                     <span class="green-btn px-4 py-2 rounded-xl text-[8px]">Шар</span>
+                </button>
+                <button onclick="openLimboModal()" class="game-card text-center">
+                    <div class="game-icon">🎲</div>
+                    <p class="text-[9px] font-black text-cyan-600 uppercase mb-2 italic">Limbo</p>
+                    <span class="blue-btn px-4 py-2 rounded-xl text-[8px]">x100</span>
                 </button>
                 <button onclick="openJackpotModal()" class="game-card text-center">
                     <div class="game-icon">💰</div>
@@ -1129,7 +1167,23 @@
             { id: 'jackpot_win', name: 'Джекпот-король', description: 'Выиграть в Джекпоте', required: 1, reward: 50000, type: 'jackpot_win' },
             { id: 'play_slots', name: 'Игрок в слоты', description: 'Сыграть в Слоты 20 раз', required: 20, reward: 5000, type: 'play_slots' },
             { id: 'play_mines', name: 'Сапер', description: 'Сыграть в Мины 15 раз', required: 15, reward: 6000, type: 'play_mines' },
-            { id: 'achievement_collector', name: 'Коллекционер', description: 'Собрать 10 достижений', required: 10, reward: 20000, type: 'achievements_count' }
+            { id: 'achievement_collector', name: 'Коллекционер', description: 'Собрать 10 достижений', required: 10, reward: 20000, type: 'achievements_count' },
+            // Ежедневные квесты
+            { id: 'daily_bet_50k', name: 'Ежедневные ставки', description: 'Поставить 50.000 BC за день', required: 50000, reward: 3000, type: 'daily_bet' },
+            { id: 'daily_win_10k', name: 'Ежедневный выигрыш', description: 'Выиграть 10.000 BC за день', required: 10000, reward: 2000, type: 'daily_win' },
+            { id: 'daily_games_5', name: 'Активный игрок', description: 'Сыграть в 5 разных игр за день', required: 5, reward: 4000, type: 'daily_games_variety' },
+            // Еженедельные квесты
+            { id: 'weekly_bet_500k', name: 'Недельный игрок', description: 'Поставить 500.000 BC за неделю', required: 500000, reward: 20000, type: 'weekly_bet' },
+            { id: 'weekly_win_100k', name: 'Недельный победитель', description: 'Выиграть 100.000 BC за неделю', required: 100000, reward: 15000, type: 'weekly_win' },
+            { id: 'weekly_cases_10', name: 'Охотник за кейсами', description: 'Открыть 10 кейсов за неделю', required: 10, reward: 10000, type: 'weekly_cases' },
+            // Специальные квесты
+            { id: 'play_blackjack', name: 'Картежник', description: 'Сыграть в Блэкджек 15 раз', required: 15, reward: 7000, type: 'play_blackjack' },
+            { id: 'play_tower', name: 'Альпинист', description: 'Сыграть в Башню 10 раз', required: 10, reward: 6000, type: 'play_tower' },
+            { id: 'play_plinko', name: 'Мастер Плинко', description: 'Сыграть в Плинко 20 раз', required: 20, reward: 8000, type: 'play_plinko' },
+            { id: 'send_gift', name: 'Щедрый друг', description: 'Отправить подарок другу', required: 1, reward: 5000, type: 'send_gift' },
+            { id: 'win_coinflip', name: 'Монетный король', description: 'Выиграть 20.000 BC в Монетке', required: 20000, reward: 3000, type: 'win_coinflip' },
+            { id: 'use_promo', name: 'Промокодер', description: 'Использовать промокод', required: 1, reward: 2000, type: 'use_promo' },
+            { id: 'vip_status', name: 'VIP персона', description: 'Получить VIP статус', required: 1, reward: 25000, type: 'get_vip' }
         ];
 
         // Система достижений
@@ -2518,6 +2572,92 @@
             } else {
                 showRealtimeNotification("Ничья", "Ставка возвращена", "info");
             }
+        }
+
+        // === LIMBO ===
+        function openLimboModal() {
+            document.getElementById('limbo-modal').classList.remove('hidden');
+            updateLimboPotentialWin();
+        }
+        
+        function closeLimboModal() {
+            document.getElementById('limbo-modal').classList.add('hidden');
+            document.getElementById('limbo-result').classList.add('hidden');
+        }
+        
+        function setQuickBetLimbo(amount) {
+            document.getElementById('limbo-bet-amount').value = amount;
+        }
+        
+        function updateLimboPotentialWin() {
+            const target = parseFloat(document.getElementById('limbo-target').value) || 2.0;
+            document.getElementById('limbo-potential-win').innerText = 'x' + target.toFixed(2);
+        }
+        
+        // Обновляем потенциальный выигрыш при изменении множителя
+        document.addEventListener('DOMContentLoaded', () => {
+            const limboTarget = document.getElementById('limbo-target');
+            if (limboTarget) {
+                limboTarget.addEventListener('input', updateLimboPotentialWin);
+            }
+        });
+        
+        async function playLimbo() {
+            const bet = parseInt(document.getElementById('limbo-bet-amount').value);
+            const targetMultiplier = parseFloat(document.getElementById('limbo-target').value);
+            
+            if (!bet || bet < 100 || bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Некорректная сумма ставки!", "error");
+                return;
+            }
+            
+            if (!targetMultiplier || targetMultiplier < 1.01 || targetMultiplier > 100) {
+                showRealtimeNotification("Ошибка", "Множитель должен быть от 1.01 до 100!", "error");
+                return;
+            }
+            
+            // Генерируем случайный множитель с провабельно убывающей вероятностью
+            // Используем экспоненциальное распределение для реалистичности
+            const randomValue = Math.random();
+            let resultMultiplier;
+            
+            if (randomValue < 0.5) {
+                // 50% шанс на низкие множители (1.00-2.00)
+                resultMultiplier = 1.00 + randomValue * 2;
+            } else if (randomValue < 0.8) {
+                // 30% шанс на средние множители (2.00-10.00)
+                resultMultiplier = 2.00 + (randomValue - 0.5) * 26.67;
+            } else if (randomValue < 0.95) {
+                // 15% шанс на высокие множители (10.00-50.00)
+                resultMultiplier = 10.00 + (randomValue - 0.8) * 266.67;
+            } else {
+                // 5% шанс на очень высокие множители (50.00-100.00)
+                resultMultiplier = 50.00 + (randomValue - 0.95) * 1000;
+            }
+            
+            resultMultiplier = Math.min(100, Math.max(1.00, resultMultiplier));
+            
+            // Показываем результат
+            document.getElementById('limbo-result-multiplier').innerText = 'x' + resultMultiplier.toFixed(2);
+            document.getElementById('limbo-result').classList.remove('hidden');
+            
+            // Проверяем выигрыш
+            const win = resultMultiplier >= targetMultiplier;
+            
+            if (win) {
+                const winAmount = Math.floor(bet * targetMultiplier);
+                await updateData(winAmount - bet, 100);
+                showRealtimeNotification("ПОБЕДА!", `x${resultMultiplier.toFixed(2)} >= x${targetMultiplier.toFixed(2)}! +${(winAmount - bet).toLocaleString()} BC!`, "success");
+                updateUserStats('win', winAmount - bet);
+                checkAchievementProgress('win', 1);
+            } else {
+                await updateData(-bet, 20);
+                showRealtimeNotification("ПРОИГРЫШ", `x${resultMultiplier.toFixed(2)} < x${targetMultiplier.toFixed(2)}. -${bet} BC`, "error");
+                updateUserStats('loss', bet);
+            }
+            
+            updateQuestProgress('play_limbo', 1);
+            await saveBetToHistory('Limbo', bet, win ? Math.floor(bet * targetMultiplier) - bet : -bet);
         }
 
         // === ДЖЕКПОТ ===
