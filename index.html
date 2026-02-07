@@ -1008,8 +1008,11 @@
 
                 <div class="admin-cmd-list space-y-1">
                     <p><b>/setbc (ник) (число)</b> — Установить баланс</p>
+                    <p><b>/addbc (ник) (число)</b> — Добавить BC</p>
+                    <p><b>/removebc (ник) (число)</b> — Убрать BC</p>
                     <p><b>/setxp (ник) (число)</b> — Установить XP</p>
                     <p><b>/globalalert (текст)</b> — Сообщение всем игрокам</p>
+                    <p><b>/broadcast (текст)</b> — Глобальное сообщение</p>
                     <p><b>/ban (ник) (причина)</b> — Заблокировать игрока</p>
                     <p><b>/unban (ник)</b> — Разблокировать игрока</p>
                     <p><b>/givekey (ник) (кейс)</b> — Выдать ключ от кейса</p>
@@ -1020,8 +1023,9 @@
                     <p><b>/giveboost (ник) (тип) (часы)</b> — Выдать буст</p>
                     <p><b>/setdaily (ник) (число)</b> — Установить ежедневный бонус</p>
                     <p><b>/resetstats (ник)</b> — Сбросить статистику</p>
+                    <p><b>/resetall (ник)</b> — Сбросить все данные игрока</p>
                     <p><b>/clearmessages (ник)</b> — Очистить сообщения</p>
-                    <p class="text-yellow-500 mt-2">НОВЫЕ КОМАНДЫ:</p>
+                    <p class="text-yellow-500 mt-2">ДОПОЛНИТЕЛЬНЫЕ КОМАНДЫ:</p>
                     <p><b>/mute (ник) (минуты)</b> — Замутить игрока</p>
                     <p><b>/unmute (ник)</b> — Размутить игрока</p>
                     <p><b>/kick (ник)</b> — Кикнуть из сессии</p>
@@ -1036,6 +1040,7 @@
                     <p><b>/announce (текст)</b> — Важное объявление</p>
                     <p><b>/setrate (игра) (шанс)</b> — Изменить шанс выигрыша</p>
                     <p><b>/logs (ник)</b> — Просмотр логов игрока</p>
+                    <p><b>/stats</b> — Статистика сервера</p>
                     <p><b>/refund (ник) (сумма)</b> — Возврат средств</p>
                 </div>
             </div>
@@ -3297,6 +3302,85 @@
                         showRealtimeNotification("Успех", `Возврат ${refundAmount.toLocaleString()} BC для ${targetNick}`, "success");
                         break;
 
+                    case '/addbc':
+                        const addAmount = parseInt(value);
+                        if (!targetNick || !addAmount || isNaN(addAmount)) throw "Формат: /addbc (ник) (сумма)";
+                        
+                        const { data: addProfile } = await sb.from('profiles').select('balance').eq('username', targetNick).single();
+                        if (!addProfile) throw "Игрок не найден";
+                        
+                        await sb.from('profiles').update({
+                            balance: addProfile.balance + addAmount
+                        }).eq('username', targetNick);
+                        
+                        showRealtimeNotification("Успех", `Добавлено ${addAmount.toLocaleString()} BC игроку ${targetNick}`, "success");
+                        break;
+
+                    case '/removebc':
+                        const removeAmount = parseInt(value);
+                        if (!targetNick || !removeAmount || isNaN(removeAmount)) throw "Формат: /removebc (ник) (сумма)";
+                        
+                        const { data: removeProfile } = await sb.from('profiles').select('balance').eq('username', targetNick).single();
+                        if (!removeProfile) throw "Игрок не найден";
+                        
+                        await sb.from('profiles').update({
+                            balance: Math.max(0, removeProfile.balance - removeAmount)
+                        }).eq('username', targetNick);
+                        
+                        showRealtimeNotification("Успех", `Убрано ${removeAmount.toLocaleString()} BC у игрока ${targetNick}`, "success");
+                        break;
+
+                    case '/stats':
+                        const { data: allProfiles } = await sb.from('profiles').select('username, balance, xp');
+                        const { data: onlineUsers } = await sb.from('online_status').select('*').eq('is_online', true);
+                        const { data: allBets } = await sb.from('bet_history').select('amount');
+                        
+                        const totalPlayers = allProfiles ? allProfiles.length : 0;
+                        const onlinePlayers = onlineUsers ? onlineUsers.length : 0;
+                        const totalBalance = allProfiles ? allProfiles.reduce((sum, p) => sum + (p.balance || 0), 0) : 0;
+                        const totalBets = allBets ? allBets.reduce((sum, b) => sum + (b.amount || 0), 0) : 0;
+                        
+                        const statsMsg = `📊 Статистика сервера:\nИгроков: ${totalPlayers}\nОнлайн: ${onlinePlayers}\nОбщий баланс: ${totalBalance.toLocaleString()} BC\nВсего ставок: ${totalBets.toLocaleString()} BC`;
+                        showRealtimeNotification("Статистика", statsMsg, "info");
+                        console.log(statsMsg);
+                        break;
+
+                    case '/resetall':
+                        if (!targetNick) throw "Формат: /resetall (ник)";
+                        
+                        // Сбрасываем все данные игрока
+                        await sb.from('profiles').update({
+                            balance: 10000,
+                            xp: 0,
+                            bank_balance: 0,
+                            total_won: 0,
+                            total_lost: 0,
+                            total_bets: 0,
+                            warnings: 0
+                        }).eq('username', targetNick);
+                        
+                        await sb.from('user_stats').delete().eq('username', targetNick);
+                        await sb.from('bet_history').delete().eq('username', targetNick);
+                        await sb.from('transactions').delete().eq('username', targetNick);
+                        
+                        showRealtimeNotification("Успех", `Все данные игрока ${targetNick} сброшены`, "success");
+                        break;
+
+                    case '/broadcast':
+                        const broadcastMsg = parts.slice(1).join(' ');
+                        if (!broadcastMsg) throw "Формат: /broadcast (текст)";
+                        
+                        await sb.from('global_alerts').insert([{ 
+                            sender: `АДМИНИСТРАТОР ${u.username}`, 
+                            message: broadcastMsg 
+                        }]);
+                        
+                        // Показываем всем пользователям
+                        showGlobalBroadcast(`АДМИНИСТРАТОР ${u.username}`, broadcastMsg);
+                        
+                        showRealtimeNotification("Успех", "Сообщение отправлено всем пользователям", "success");
+                        break;
+
                     default:
                         showRealtimeNotification("Ошибка", "Неизвестная команда", "error");
                 }
@@ -3606,6 +3690,31 @@
                     }
                 }
             }
+        }
+
+        // === СИСТЕМА РАНГОВ ===
+        function getRankByXP(xp) {
+            const ranks = [
+                { name: 'Bronze', minXP: 0, color: '#cd7f32', icon: '🥉' },
+                { name: 'Silver', minXP: 10000, color: '#c0c0c0', icon: '🥈' },
+                { name: 'Gold', minXP: 25000, color: '#ffd700', icon: '🥇' },
+                { name: 'Platinum', minXP: 50000, color: '#e5e4e2', icon: '💎' },
+                { name: 'Diamond', minXP: 100000, color: '#b9f2ff', icon: '💠' },
+                { name: 'Master', minXP: 200000, color: '#ff00ff', icon: '👑' },
+                { name: 'Grandmaster', minXP: 500000, color: '#ff4500', icon: '🔥' },
+                { name: 'Legend', minXP: 1000000, color: '#ff0000', icon: '⭐' }
+            ];
+            
+            let currentRank = ranks[0];
+            for (const rank of ranks) {
+                if (xp >= rank.minXP) {
+                    currentRank = rank;
+                } else {
+                    break;
+                }
+            }
+            
+            return currentRank;
         }
 
         async function updateUI() {
