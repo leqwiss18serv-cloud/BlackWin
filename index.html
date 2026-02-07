@@ -904,6 +904,30 @@
                 <h3 class="font-black text-[10px] text-gray-500 uppercase italic mb-4">СООБЩЕНИЯ</h3>
                 <div id="unread-messages" class="space-y-2"></div>
             </div>
+            
+            <div class="glass p-6 rounded-[35px]">
+                <h3 class="font-black text-[10px] text-gray-500 uppercase italic mb-4">РЕФЕРАЛЬНАЯ ПРОГРАММА</h3>
+                <p class="text-xs text-gray-400 mb-4">Приглашайте друзей и получайте бонусы!</p>
+                <div class="bg-black/50 p-4 rounded-xl mb-4">
+                    <p class="text-[10px] text-gray-500 mb-2">Ваш реферальный код:</p>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="referral-code" readonly class="flex-1 p-3 rounded-xl text-center font-black text-red-600" value="">
+                        <button onclick="copyReferralCode()" class="red-btn px-4 py-3 rounded-xl text-[10px]">КОПИРОВАТЬ</button>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-gray-400">Приглашено друзей:</span>
+                        <span id="referred-count" class="font-black text-green-500">0</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-gray-400">Бонус за рефералов:</span>
+                        <span id="referral-bonus" class="font-black text-yellow-500">0 BC</span>
+                    </div>
+                </div>
+                <input type="text" id="use-referral-input" placeholder="ВВЕСТИ РЕФЕРАЛЬНЫЙ КОД" class="w-full p-4 rounded-2xl font-black uppercase mt-4 border border-green-600/20 text-[10px]">
+                <button onclick="useReferralCode()" class="green-btn w-full py-4 rounded-xl text-xs mt-2">ИСПОЛЬЗОВАТЬ КОД</button>
+            </div>
         </section>
 
         <section id="s-top" class="section space-y-2">
@@ -1384,6 +1408,7 @@
             loadUnreadMessages();
             startQuestsTimer();
             initializeSettings();
+            initReferralSystem();
             
             // Показываем приветственное сообщение
             showRealtimeNotification("Добро пожаловать", `С возвращением, ${u.username}!`, "info");
@@ -4667,6 +4692,7 @@
             }]);
             
             showRealtimeNotification("УСПЕХ", `Подарок отправлен ${activeFriend}!`, "success");
+            updateQuestProgress('send_gift', 1);
         }
 
         function challengeFriendToGame() {
@@ -4687,6 +4713,111 @@
                 receiver: activeFriend,
                 text: `🎮 ВЫЗОВ НА ИГРУ! ${u.username} вызывает вас на игру с ставкой ${amount} BC!`
             }]);
+        }
+
+        // === РЕФЕРАЛЬНАЯ СИСТЕМА ===
+        function generateReferralCode() {
+            // Генерируем уникальный код на основе username
+            return u.username.substring(0, 3).toUpperCase() + Math.random().toString(36).substring(2, 7).toUpperCase();
+        }
+
+        function initReferralSystem() {
+            // Получаем или создаем реферальный код
+            const savedCode = localStorage.getItem('referral_code_' + u.username);
+            if (savedCode) {
+                referralCode = savedCode;
+            } else {
+                referralCode = generateReferralCode();
+                localStorage.setItem('referral_code_' + u.username, referralCode);
+            }
+            
+            document.getElementById('referral-code').value = referralCode;
+            
+            // Загружаем статистику рефералов
+            loadReferralStats();
+        }
+
+        async function loadReferralStats() {
+            const referredByKey = 'referred_by_' + u.username;
+            const referredBy = localStorage.getItem(referredByKey);
+            
+            // Подсчитываем количество приглашенных
+            let referredCount = 0;
+            const allUsers = Object.keys(localStorage);
+            for (const key of allUsers) {
+                if (key.startsWith('referred_by_')) {
+                    const code = localStorage.getItem(key);
+                    if (code === referralCode) {
+                        referredCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('referred-count').textContent = referredCount;
+            
+            // Подсчитываем бонус (например, 1000 BC за каждого реферала)
+            const bonus = referredCount * 1000;
+            document.getElementById('referral-bonus').textContent = bonus.toLocaleString() + ' BC';
+        }
+
+        function copyReferralCode() {
+            const codeInput = document.getElementById('referral-code');
+            codeInput.select();
+            document.execCommand('copy');
+            showRealtimeNotification("УСПЕХ", "Реферальный код скопирован!", "success");
+        }
+
+        async function useReferralCode() {
+            const codeInput = document.getElementById('use-referral-input');
+            const code = codeInput.value.trim().toUpperCase();
+            
+            if (!code) {
+                showRealtimeNotification("Ошибка", "Введите реферальный код!", "error");
+                return;
+            }
+            
+            if (code === referralCode) {
+                showRealtimeNotification("Ошибка", "Вы не можете использовать свой собственный код!", "error");
+                return;
+            }
+            
+            const referredByKey = 'referred_by_' + u.username;
+            const alreadyUsed = localStorage.getItem(referredByKey);
+            
+            if (alreadyUsed) {
+                showRealtimeNotification("Ошибка", "Вы уже использовали реферальный код!", "error");
+                return;
+            }
+            
+            // Проверяем, существует ли такой код
+            let codeExists = false;
+            const allUsers = Object.keys(localStorage);
+            for (const key of allUsers) {
+                if (key.startsWith('referral_code_')) {
+                    const savedCode = localStorage.getItem(key);
+                    if (savedCode === code) {
+                        codeExists = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!codeExists) {
+                showRealtimeNotification("Ошибка", "Реферальный код не найден!", "error");
+                return;
+            }
+            
+            // Сохраняем, что пользователь использовал код
+            localStorage.setItem(referredByKey, code);
+            
+            // Даем бонус новому пользователю (5000 BC)
+            const bonus = 5000;
+            await updateData(bonus, 0);
+            
+            showRealtimeNotification("УСПЕХ", `Реферальный код активирован! +${bonus} BC!`, "success");
+            codeInput.value = '';
+            
+            updateQuestProgress('refer_friend', 1);
         }
 
         function renderCases() {
