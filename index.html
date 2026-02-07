@@ -193,6 +193,75 @@
         ::-webkit-scrollbar-track { background: #0f0f0f; }
         ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #ff3333; }
+        
+        /* Кастомные модальные окна */
+        .custom-modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.95); z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .custom-modal-overlay.active {
+            opacity: 1; pointer-events: all;
+        }
+        .custom-modal {
+            background: linear-gradient(135deg, #0f0f0f 0%, #000 100%);
+            border-radius: 25px; padding: 30px;
+            max-width: 450px; width: 100%;
+            transform: scale(0.9); transition: transform 0.3s ease;
+            position: relative; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        .custom-modal-overlay.active .custom-modal {
+            transform: scale(1);
+        }
+        .custom-modal.error { border: 2px solid #ff0000; }
+        .custom-modal.success { border: 2px solid #00ff00; }
+        .custom-modal.warning { border: 2px solid #ffcc00; }
+        .custom-modal.info { border: 2px solid #0080ff; }
+        .custom-modal-title {
+            font-size: 24px; font-weight: 900; margin-bottom: 15px;
+            text-align: center; letter-spacing: 1px;
+        }
+        .custom-modal-message {
+            font-size: 14px; color: #ccc; margin-bottom: 25px;
+            text-align: center; line-height: 1.6;
+        }
+        .custom-modal-input {
+            width: 100%; padding: 15px; font-size: 16px;
+            border-radius: 15px; margin-bottom: 20px;
+            background: #151515; border: 2px solid #333;
+            color: white; text-align: center; font-weight: 700;
+            transition: border-color 0.2s;
+        }
+        .custom-modal-input:focus {
+            outline: none; border-color: #ff0000;
+        }
+        .custom-modal-buttons {
+            display: flex; gap: 10px; justify-content: center;
+        }
+        .custom-modal-btn {
+            padding: 12px 30px; border-radius: 15px;
+            font-weight: 900; font-size: 14px; text-transform: uppercase;
+            cursor: pointer; transition: all 0.2s; border: none;
+            letter-spacing: 0.5px;
+        }
+        .custom-modal-btn:active {
+            transform: scale(0.95);
+        }
+        .custom-modal-btn-confirm {
+            background: linear-gradient(90deg, #ff0000, #a00000);
+            color: white;
+        }
+        .custom-modal-btn-cancel {
+            background: linear-gradient(90deg, #333, #222);
+            color: #999;
+        }
+        
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
     </style>
 </head>
 <body class="pb-28">
@@ -209,6 +278,32 @@
     
     <!-- Реалтайм уведомления -->
     <div id="realtime-notifications-container"></div>
+
+    <!-- Кастомные модальные окна -->
+    <!-- Confirm Dialog -->
+    <div id="custom-confirm-modal" class="custom-modal-overlay">
+        <div class="custom-modal">
+            <div class="custom-modal-title" id="confirm-title">Подтверждение</div>
+            <div class="custom-modal-message" id="confirm-message">Вы уверены?</div>
+            <div class="custom-modal-buttons">
+                <button id="confirm-cancel-btn" class="custom-modal-btn custom-modal-btn-cancel">Отмена</button>
+                <button id="confirm-ok-btn" class="custom-modal-btn custom-modal-btn-confirm">ОК</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prompt Dialog -->
+    <div id="custom-prompt-modal" class="custom-modal-overlay">
+        <div class="custom-modal">
+            <div class="custom-modal-title" id="prompt-title">Введите значение</div>
+            <div class="custom-modal-message" id="prompt-message">Пожалуйста, введите данные:</div>
+            <input type="text" id="prompt-input" class="custom-modal-input" placeholder="Введите значение">
+            <div class="custom-modal-buttons">
+                <button id="prompt-cancel-btn" class="custom-modal-btn custom-modal-btn-cancel">Отмена</button>
+                <button id="prompt-ok-btn" class="custom-modal-btn custom-modal-btn-confirm">ОК</button>
+            </div>
+        </div>
+    </div>
 
     <div id="ban-overlay" class="fixed inset-0 z-[5000] bg-black flex items-center justify-center p-6 hidden">
         <div class="glass p-10 rounded-[40px] w-full max-w-sm text-center border-2 border-red-600 animate__animated animate__pulse animate__infinite">
@@ -1957,9 +2052,9 @@
         }
 
         // Coin Flip Game
-        function openCoinFlipModal() {
+        async function openCoinFlipModal() {
             // Простая реализация монетки
-            const bet = prompt("Введите сумму ставки:", "1000");
+            const bet = await showPrompt("Монетка x2", "Введите сумму ставки:", "1000", "1000");
             if (!bet) return;
             
             const betAmount = parseInt(bet);
@@ -1968,7 +2063,7 @@
                 return;
             }
             
-            const choice = confirm("Выберите сторону монетки:\n\nOK - Орел (Выигрыш x2)\nОтмена - Решка (Выигрыш x2)");
+            const choice = await showConfirm("Выбор стороны монетки", "ОК - Орел (Выигрыш x2)\nОтмена - Решка (Выигрыш x2)");
             const userChoice = choice ? 'heads' : 'tails';
             const result = Math.random() > 0.5 ? 'heads' : 'tails';
             
@@ -1987,9 +2082,9 @@
         }
 
         // Wheel Game
-        function openWheelModal() {
+        async function openWheelModal() {
             // Упрощенная реализация колеса фортуны
-            const bet = prompt("Введите сумму ставки (шанс 10%, выигрыш x10):", "1000");
+            const bet = await showPrompt("Колесо Фортуны x10", "Введите сумму ставки (шанс 10%, выигрыш x10):", "1000", "1000");
             if (!bet) return;
             
             const betAmount = parseInt(bet);
@@ -3219,6 +3314,188 @@
             }, 5000);
         }
 
+        // === КАСТОМНАЯ СИСТЕМА УВЕДОМЛЕНИЙ ===
+        
+        // Функция для показа toast-уведомления (алиас для showRealtimeNotification)
+        function showNotification(title, message, type = 'info', duration = 3000) {
+            const container = document.getElementById('realtime-notifications-container');
+            if (!container) return;
+            
+            const notificationId = 'notification-' + Date.now();
+            
+            let bgColor = 'bg-gray-800';
+            let borderColor = 'border-gray-600';
+            
+            switch(type) {
+                case 'success':
+                    bgColor = 'bg-green-900/50';
+                    borderColor = 'border-green-500';
+                    break;
+                case 'error':
+                    bgColor = 'bg-red-900/50';
+                    borderColor = 'border-red-500';
+                    break;
+                case 'warning':
+                    bgColor = 'bg-yellow-900/50';
+                    borderColor = 'border-yellow-500';
+                    break;
+                case 'info':
+                    bgColor = 'bg-blue-900/50';
+                    borderColor = 'border-blue-500';
+                    break;
+            }
+            
+            const notification = document.createElement('div');
+            notification.id = notificationId;
+            notification.className = `realtime-notification ${bgColor} ${borderColor}`;
+            notification.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <h4 class="font-bold text-sm">${title}</h4>
+                    <button onclick="document.getElementById('${notificationId}').remove()" class="text-gray-400">✕</button>
+                </div>
+                <p class="text-xs text-gray-300">${message}</p>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Автоматическое удаление
+            setTimeout(() => {
+                const el = document.getElementById(notificationId);
+                if (el) {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateX(100%)';
+                    setTimeout(() => el.remove(), 500);
+                }
+            }, duration);
+        }
+
+        // Функция для показа диалога подтверждения
+        function showConfirm(title, message, onConfirm, onCancel) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('custom-confirm-modal');
+                const titleEl = document.getElementById('confirm-title');
+                const messageEl = document.getElementById('confirm-message');
+                const okBtn = document.getElementById('confirm-ok-btn');
+                const cancelBtn = document.getElementById('confirm-cancel-btn');
+                
+                if (!modal) {
+                    resolve(false);
+                    return;
+                }
+                
+                titleEl.textContent = title;
+                messageEl.textContent = message;
+                
+                // Очищаем старые обработчики
+                const newOkBtn = okBtn.cloneNode(true);
+                const newCancelBtn = cancelBtn.cloneNode(true);
+                okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+                cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+                
+                const cleanup = () => {
+                    modal.classList.remove('active');
+                    modal.removeEventListener('click', outsideClickHandler);
+                };
+                
+                const outsideClickHandler = (e) => {
+                    if (e.target === modal) {
+                        cleanup();
+                        if (onCancel) onCancel();
+                        resolve(false);
+                    }
+                };
+                
+                newOkBtn.addEventListener('click', () => {
+                    cleanup();
+                    if (onConfirm) onConfirm();
+                    resolve(true);
+                }, { once: true });
+                
+                newCancelBtn.addEventListener('click', () => {
+                    cleanup();
+                    if (onCancel) onCancel();
+                    resolve(false);
+                }, { once: true });
+                
+                // Закрытие по клику вне модального окна
+                modal.addEventListener('click', outsideClickHandler);
+                
+                modal.classList.add('active');
+            });
+        }
+
+        // Функция для показа диалога с инпутом
+        function showPrompt(title, message, placeholder = '', defaultValue = '', onSubmit, onCancel) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('custom-prompt-modal');
+                const titleEl = document.getElementById('prompt-title');
+                const messageEl = document.getElementById('prompt-message');
+                const input = document.getElementById('prompt-input');
+                const okBtn = document.getElementById('prompt-ok-btn');
+                const cancelBtn = document.getElementById('prompt-cancel-btn');
+                
+                if (!modal) {
+                    resolve(null);
+                    return;
+                }
+                
+                titleEl.textContent = title;
+                messageEl.textContent = message;
+                input.placeholder = placeholder;
+                input.value = defaultValue;
+                
+                // Очищаем старые обработчики
+                const newOkBtn = okBtn.cloneNode(true);
+                const newCancelBtn = cancelBtn.cloneNode(true);
+                okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+                cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+                
+                const cleanup = () => {
+                    modal.classList.remove('active');
+                    input.removeEventListener('keypress', keypressHandler);
+                    modal.removeEventListener('click', outsideClickHandler);
+                };
+                
+                const submit = () => {
+                    const value = input.value.trim();
+                    cleanup();
+                    if (onSubmit) onSubmit(value);
+                    resolve(value || null);
+                };
+                
+                const keypressHandler = (e) => {
+                    if (e.key === 'Enter') {
+                        submit();
+                    }
+                };
+                
+                const outsideClickHandler = (e) => {
+                    if (e.target === modal) {
+                        cleanup();
+                        if (onCancel) onCancel();
+                        resolve(null);
+                    }
+                };
+                
+                newOkBtn.addEventListener('click', submit, { once: true });
+                
+                newCancelBtn.addEventListener('click', () => {
+                    cleanup();
+                    if (onCancel) onCancel();
+                    resolve(null);
+                }, { once: true });
+                
+                // Закрытие по Enter
+                input.addEventListener('keypress', keypressHandler);
+                
+                // Закрытие по клику вне модального окна
+                modal.addEventListener('click', outsideClickHandler);
+                
+                modal.classList.add('active');
+                setTimeout(() => input.focus(), 100);
+            });
+        }
+
         // === СИСТЕМА ДОСТИЖЕНИЙ ===
         async function loadAchievements() {
             const { data, error } = await sb
@@ -3458,31 +3735,41 @@
 
         async function updateUI() {
             if(!u) return;
-            document.getElementById('ui-nick').innerText = u.username;
-            document.getElementById('ui-balance').innerText = u.balance.toLocaleString() + ' BC';
-            document.getElementById('ui-bank-balance').innerText = u.bank_balance.toLocaleString() + ' BC';
-            document.getElementById('ui-xp-total').innerText = u.xp.toLocaleString();
+            
+            // Безопасное обновление элементов с проверками
+            const updateElement = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = value;
+            };
+            
+            updateElement('ui-nick', u.username);
+            updateElement('ui-balance', (u.balance || 0).toLocaleString() + ' BC');
+            updateElement('ui-bank-balance', (u.bank_balance || 0).toLocaleString() + ' BC');
+            updateElement('ui-xp-total', (u.xp || 0).toLocaleString());
 
-            const lvl = Math.floor(u.xp / 1000) + 1;
-            const xpInLevel = u.xp % 1000;
+            const lvl = Math.floor((u.xp || 0) / 1000) + 1;
+            const xpInLevel = (u.xp || 0) % 1000;
             const progress = (xpInLevel / 1000) * 100;
 
-            document.getElementById('bp-lvl').innerText = lvl;
-            document.getElementById('bp-xp-current').innerText = xpInLevel;
-            document.getElementById('bp-progress').style.width = progress + '%';
+            updateElement('bp-lvl', lvl);
+            updateElement('bp-xp-current', xpInLevel);
+            
+            const progressBar = document.getElementById('bp-progress');
+            if (progressBar) progressBar.style.width = progress + '%';
 
             const claimBtn = document.getElementById('bp-claim-btn');
-
-            const isClaimed = claimedLevels.includes(lvl);
-            
-            if (lvl > 0 && !isClaimed) {
-                claimBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                claimBtn.classList.add('red-btn');
-                claimBtn.innerText = `Забрать награду за ${lvl} LVL`;
-            } else {
-                claimBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                claimBtn.classList.remove('red-btn');
-                claimBtn.innerText = "Награда получена";
+            if (claimBtn) {
+                const isClaimed = claimedLevels.includes(lvl);
+                
+                if (lvl > 0 && !isClaimed) {
+                    claimBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    claimBtn.classList.add('red-btn');
+                    claimBtn.innerText = `Забрать награду за ${lvl} LVL`;
+                } else {
+                    claimBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    claimBtn.classList.remove('red-btn');
+                    claimBtn.innerText = "Награда получена";
+                }
             }
             
             // Обновляем прогресс квеста на уровень
@@ -3626,6 +3913,11 @@
         }
 
         async function updateData(b, x) {
+            if (!u) {
+                console.error('updateData called with null user');
+                return { b: 0, x: 0 };
+            }
+            
             // Применяем бонусы от ивентов
             let bonusMultiplier = 1;
             if (activeEvent) {
@@ -3785,7 +4077,17 @@
         }
 
         async function playBinaryGame(choice) {
+            if (!u) {
+                showRealtimeNotification("Ошибка", "Необходимо авторизоваться!", "error");
+                return;
+            }
+            
             const betInput = document.getElementById('binary-bet-amount');
+            if (!betInput) {
+                console.error('Binary bet input not found');
+                return;
+            }
+            
             const betAmount = parseInt(betInput.value);
             
             if (!betAmount || betAmount <= 0) {
@@ -3793,7 +4095,7 @@
                 return;
             }
             
-            if (betAmount > u.balance) {
+            if (betAmount > (u.balance || 0)) {
                 showRealtimeNotification("Ошибка", "Недостаточно BC для ставки!", "error");
                 return;
             }
@@ -4062,7 +4364,12 @@
         }
 
         async function bankAction(type) {
-            const val = prompt("Введите сумму:");
+            const val = await showPrompt(
+                type === 'dep' ? "Вклад в банк" : "Снятие с банка",
+                "Введите сумму:",
+                type === 'dep' ? (u.balance || 0).toString() : (u.bank_balance || 0).toString(),
+                "1000"
+            );
             const amt = parseInt(val);
             if(!amt || amt <= 0) {
                 showRealtimeNotification("Ошибка", "Введите корректную сумму!", "error");
@@ -4277,7 +4584,8 @@
         }
 
         async function removeFriend(friendName) {
-            if (!confirm(`Удалить ${friendName} из друзей?`)) return;
+            const confirmed = await showConfirm("Удаление друга", `Вы уверены, что хотите удалить ${friendName} из друзей?`);
+            if (!confirmed) return;
             
             await sb.from('friendships')
                 .delete()
@@ -4378,7 +4686,7 @@
         async function sendGiftToFriend() {
             if (!activeFriend) return;
             
-            const amount = prompt("Введите сумму подарка:", "1000");
+            const amount = await showPrompt("Подарок другу", "Введите сумму подарка:", "1000", "1000");
             if (!amount) return;
             
             const giftAmount = parseInt(amount);
@@ -4408,13 +4716,13 @@
             showRealtimeNotification("УСПЕХ", `Подарок отправлен ${activeFriend}!`, "success");
         }
 
-        function challengeFriendToGame() {
+        async function challengeFriendToGame() {
             if (!activeFriend) return;
             
-            const game = prompt("Выберите игру для вызова:\n1. Удача 50/50\n2. Рулетка x3\n3. Кости x6", "1");
+            const game = await showPrompt("Вызов на игру", "Выберите игру:\n1. Удача 50/50\n2. Рулетка x3\n3. Кости x6", "1, 2 или 3", "1");
             if (!game) return;
             
-            const amount = prompt("Введите сумму ставки:", "1000");
+            const amount = await showPrompt("Сумма ставки", "Введите сумму ставки:", "1000", "1000");
             if (!amount) return;
             
             showRealtimeNotification("ВЫЗОВ", `Вызов отправлен ${activeFriend} на игру!`, "info");
