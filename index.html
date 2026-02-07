@@ -1318,17 +1318,29 @@
             showRealtimeNotification("Добро пожаловать", `С возвращением, ${u.username}!`, "info");
         }
 
+        let jackpotUpdateTimer = null;
+        
         async function updateJackpotDisplay() {
             const { data } = await sb.from('jackpot_pool').select('*').limit(1).single();
             if (data && data.amount) {
                 const displayElement = document.getElementById('jackpot-display');
                 if (displayElement) {
-                    displayElement.innerText = (data.amount / 1000).toFixed(0) + 'K BC';
+                    const amount = data.amount;
+                    if (amount >= 1000000000) {
+                        displayElement.innerText = (amount / 1000000000).toFixed(1) + 'B BC';
+                    } else if (amount >= 1000000) {
+                        displayElement.innerText = (amount / 1000000).toFixed(1) + 'M BC';
+                    } else {
+                        displayElement.innerText = (amount / 1000).toFixed(0) + 'K BC';
+                    }
                 }
             }
             
-            // Обновляем каждые 30 секунд
-            setTimeout(updateJackpotDisplay, 30000);
+            // Обновляем каждые 30 секунд, только если пользователь залогинен
+            if (u) {
+                if (jackpotUpdateTimer) clearTimeout(jackpotUpdateTimer);
+                jackpotUpdateTimer = setTimeout(updateJackpotDisplay, 30000);
+            }
         }
 
         async function updateOnlineStatus(online = true) {
@@ -1599,8 +1611,8 @@
         function initializeSettings() {
             // Загрузить сохраненные настройки
             const savedTheme = localStorage.getItem('theme') || 'dark';
-            const savedSound = localStorage.getItem('sound') !== 'false';
-            const savedNotif = localStorage.getItem('notifications') !== 'false';
+            const savedSound = localStorage.getItem('sound') === 'true' || localStorage.getItem('sound') === null;
+            const savedNotif = localStorage.getItem('notifications') === 'true' || localStorage.getItem('notifications') === null;
             
             setTheme(savedTheme);
             toggleSound(savedSound);
@@ -2985,7 +2997,7 @@
                             is_muted: true,
                             mute_until: muteUntil.toISOString() 
                         }).eq('username', targetNick);
-                        showRealtimeNotification("Успех", `Игрок ${targetNick} замучен на ${muteMinutes} минут`, "success");
+                        showRealtimeNotification("Успех", `Игрок ${targetNick} заглушен на ${muteMinutes} минут`, "success");
                         break;
 
                     case '/unmute':
@@ -2994,7 +3006,7 @@
                             is_muted: false,
                             mute_until: null 
                         }).eq('username', targetNick);
-                        showRealtimeNotification("Успех", `Игрок ${targetNick} размучен`, "success");
+                        showRealtimeNotification("Успех", `Игрок ${targetNick} разглушен`, "success");
                         break;
 
                     case '/kick':
@@ -3115,10 +3127,16 @@
 
                     case '/refund':
                         const refundAmount = parseInt(value);
-                        if (!targetNick || !refundAmount) throw "Формат: /refund (ник) (сумма)";
+                        if (!targetNick || !refundAmount || isNaN(refundAmount)) throw "Формат: /refund (ник) (сумма)";
+                        
+                        // Получаем текущий баланс и обновляем безопасно
+                        const { data: targetProfile } = await sb.from('profiles').select('balance').eq('username', targetNick).single();
+                        if (!targetProfile) throw "Игрок не найден";
+                        
                         await sb.from('profiles').update({
-                            balance: sb.raw(`balance + ${refundAmount}`)
+                            balance: targetProfile.balance + refundAmount
                         }).eq('username', targetNick);
+                        
                         await sb.from('messages').insert([{
                             sender: 'СИСТЕМА',
                             receiver: targetNick,
@@ -4455,8 +4473,11 @@
                 return;
             }
             
-            // Инициализация pity счетчика для этого кейса
-            if (!pityCounter[id]) pityCounter[id] = 0;
+            // Инициализация pity счетчика для этого кейса из localStorage
+            const pityKey = `pity_${id}_${u.username}`;
+            if (!pityCounter[id]) {
+                pityCounter[id] = parseInt(localStorage.getItem(pityKey)) || 0;
+            }
             
             // Проверка pity системы - гарантированный выигрыш
             let isWin;
@@ -4485,6 +4506,9 @@
                 winXP = 100;
                 pityCounter[id]++; // Увеличение счетчика при проигрыше
             }
+            
+            // Сохраняем pity счетчик в localStorage
+            localStorage.setItem(pityKey, pityCounter[id]);
             
             if (isUsingKey) {
                 localStorage.setItem(keyType + '_key_' + u.username, 'false');
