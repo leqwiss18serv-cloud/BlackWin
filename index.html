@@ -917,6 +917,22 @@
                     <p><b>/setdaily (ник) (число)</b> — Установить ежедневный бонус</p>
                     <p><b>/resetstats (ник)</b> — Сбросить статистику</p>
                     <p><b>/clearmessages (ник)</b> — Очистить сообщения</p>
+                    <p class="text-yellow-500 mt-2">НОВЫЕ КОМАНДЫ:</p>
+                    <p><b>/mute (ник) (минуты)</b> — Замутить игрока</p>
+                    <p><b>/unmute (ник)</b> — Размутить игрока</p>
+                    <p><b>/kick (ник)</b> — Кикнуть из сессии</p>
+                    <p><b>/warn (ник) (причина)</b> — Выдать предупреждение</p>
+                    <p><b>/clearwarns (ник)</b> — Очистить предупреждения</p>
+                    <p><b>/setlevel (ник) (уровень)</b> — Установить уровень BP</p>
+                    <p><b>/giveclan (ник) (клан)</b> — Добавить в клан</p>
+                    <p><b>/createclan (название)</b> — Создать клан</p>
+                    <p><b>/deleteclan (название)</b> — Удалить клан</p>
+                    <p><b>/jackpot (сумма)</b> — Установить джекпот</p>
+                    <p><b>/maintenance (on/off)</b> — Режим обслуживания</p>
+                    <p><b>/announce (текст)</b> — Важное объявление</p>
+                    <p><b>/setrate (игра) (шанс)</b> — Изменить шанс выигрыша</p>
+                    <p><b>/logs (ник)</b> — Просмотр логов игрока</p>
+                    <p><b>/refund (ник) (сумма)</b> — Возврат средств</p>
                 </div>
             </div>
             
@@ -1015,7 +1031,21 @@
             { id: 'claim_daily', name: 'Забрать бонусы', description: 'Забрать ежедневный бонус 5 раз', required: 5, reward: 2000, type: 'claim_daily' },
             { id: 'win_streak', name: 'Серия побед', description: 'Выиграть 5 раз подряд в любых играх', required: 5, reward: 3000, type: 'win_streak' },
             { id: 'refer_friend', name: 'Пригласить друга', description: 'Пригласить друга по реферальной ссылке', required: 1, reward: 10000, type: 'refer_friend' },
-            { id: 'complete_all', name: 'Мастер заданий', description: 'Выполнить все задания за день', required: 1, reward: 5000, type: 'complete_all' }
+            { id: 'complete_all', name: 'Мастер заданий', description: 'Выполнить все задания за день', required: 1, reward: 5000, type: 'complete_all' },
+            // Новые квесты
+            { id: 'win_streak_10', name: 'Серия из 10', description: 'Выиграть 10 раз подряд', required: 10, reward: 10000, type: 'win_streak' },
+            { id: 'balance_1m', name: 'Миллионер', description: 'Накопить баланс 1.000.000 BC', required: 1000000, reward: 50000, type: 'balance_milestone' },
+            { id: 'balance_10m', name: 'Магнат', description: 'Накопить баланс 10.000.000 BC', required: 10000000, reward: 200000, type: 'balance_milestone' },
+            { id: 'open_ruby_case', name: 'Рубиновая удача', description: 'Открыть Рубиновый кейс', required: 1, reward: 5000, type: 'open_case_type' },
+            { id: 'open_legendary_case', name: 'Легендарный игрок', description: 'Открыть Легендарный кейс', required: 1, reward: 25000, type: 'open_case_type' },
+            { id: 'invite_friends_3', name: 'Вербовщик', description: 'Пригласить 3 друзей', required: 3, reward: 15000, type: 'invite_friends' },
+            { id: 'duel_play', name: 'Дуэлянт', description: 'Участвовать в 5 PvP дуэлях', required: 5, reward: 8000, type: 'duel_play' },
+            { id: 'duel_win', name: 'Победитель дуэлей', description: 'Выиграть 3 дуэли', required: 3, reward: 12000, type: 'duel_win' },
+            { id: 'jackpot_join', name: 'Счастливчик', description: 'Участвовать в Джекпоте 3 раза', required: 3, reward: 5000, type: 'jackpot_join' },
+            { id: 'jackpot_win', name: 'Джекпот-король', description: 'Выиграть в Джекпоте', required: 1, reward: 50000, type: 'jackpot_win' },
+            { id: 'play_slots', name: 'Игрок в слоты', description: 'Сыграть в Слоты 20 раз', required: 20, reward: 5000, type: 'play_slots' },
+            { id: 'play_mines', name: 'Сапер', description: 'Сыграть в Мины 15 раз', required: 15, reward: 6000, type: 'play_mines' },
+            { id: 'achievement_collector', name: 'Коллекционер', description: 'Собрать 10 достижений', required: 10, reward: 20000, type: 'achievements_count' }
         ];
 
         // Система достижений
@@ -1037,9 +1067,21 @@
             { id: 'friend_master', name: 'Душа компании', description: 'Иметь 20 друзей', reward: 10000, type: 'friends', required: 20 },
             { id: 'vip_member', name: 'VIP статус', description: 'Получить VIP статус', reward: 15000, type: 'vip', required: 1 },
             { id: 'event_participant', name: 'Ивентовый', description: 'Участвовать в 10 ивентах', reward: 5000, type: 'events', required: 10 },
-            { id: 'all_games', name: 'Мастер игр', description: 'Сыграть во все игры', reward: 10000, type: 'games', required: 6 },
+            { id: 'all_games', name: 'Мастер игр', description: 'Сыграть во все игры', reward: 10000, type: 'games', required: 13 },
             { id: 'chat_active', name: 'Общительный', description: 'Написать 100 сообщений', reward: 5000, type: 'chat', required: 100 },
-            { id: 'perfect_day', name: 'Идеальный день', description: 'Выполнить все задания за день', reward: 10000, type: 'quests', required: 5 }
+            { id: 'perfect_day', name: 'Идеальный день', description: 'Выполнить все задания за день', reward: 10000, type: 'quests', required: 5 },
+            // Новые достижения для уровней 50-100
+            { id: 'level_75', name: '75 уровень', description: 'Достигнуть 75 уровня', reward: 100000, type: 'level', required: 75 },
+            { id: 'level_100', name: '100 уровень', description: 'Достигнуть 100 уровня (МАКС)', reward: 500000, type: 'level', required: 100 },
+            { id: 'rich_100m', name: 'Олигарх', description: 'Накопить 100.000.000 BC', reward: 500000, type: 'balance', required: 100000000 },
+            { id: 'rich_1b', name: 'Миллиардер', description: 'Накопить 1.000.000.000 BC', reward: 1000000, type: 'balance', required: 1000000000 },
+            { id: 'case_opener_100', name: 'Маньяк кейсов', description: 'Открыть 100 кейсов', reward: 50000, type: 'cases', required: 100 },
+            { id: 'case_opener_500', name: 'Легенда кейсов', description: 'Открыть 500 кейсов', reward: 200000, type: 'cases', required: 500 },
+            { id: 'duel_master', name: 'Мастер дуэлей', description: 'Выиграть 10 дуэлей', reward: 50000, type: 'duels', required: 10 },
+            { id: 'jackpot_master', name: 'Мастер джекпота', description: 'Выиграть джекпот 3 раза', reward: 100000, type: 'jackpot', required: 3 },
+            { id: 'slots_master', name: 'Мастер слотов', description: 'Выиграть x50 в слотах', reward: 25000, type: 'slots', required: 1 },
+            { id: 'mines_survivor', name: 'Выживший сапер', description: 'Открыть 20 ячеек в Минах', reward: 30000, type: 'mines', required: 20 },
+            { id: 'tower_climber', name: 'Покоритель башни', description: 'Дойти до 10 этажа в Башне', reward: 40000, type: 'tower', required: 10 }
         ];
 
         // Новые игры с хорошими шансами
@@ -2658,6 +2700,158 @@
                             max_win_streak: 0
                         }).eq('username', targetNick);
                         showRealtimeNotification("Успех", `Статистика ${targetNick} сброшена`, "success");
+                        break;
+
+                    // Новые админ-команды
+                    case '/mute':
+                        const muteMinutes = parseInt(value);
+                        if (!targetNick || !muteMinutes) throw "Формат: /mute (ник) (минуты)";
+                        const muteUntil = new Date();
+                        muteUntil.setMinutes(muteUntil.getMinutes() + muteMinutes);
+                        await sb.from('profiles').update({ 
+                            is_muted: true,
+                            mute_until: muteUntil.toISOString() 
+                        }).eq('username', targetNick);
+                        showRealtimeNotification("Успех", `Игрок ${targetNick} замучен на ${muteMinutes} минут`, "success");
+                        break;
+
+                    case '/unmute':
+                        if (!targetNick) throw "Формат: /unmute (ник)";
+                        await sb.from('profiles').update({ 
+                            is_muted: false,
+                            mute_until: null 
+                        }).eq('username', targetNick);
+                        showRealtimeNotification("Успех", `Игрок ${targetNick} размучен`, "success");
+                        break;
+
+                    case '/kick':
+                        if (!targetNick) throw "Формат: /kick (ник)";
+                        await sb.from('online_status').update({ 
+                            is_online: false 
+                        }).eq('username', targetNick);
+                        await sb.from('global_alerts').insert([{ 
+                            sender: 'АДМИНИСТРАТОР', 
+                            message: `Игрок ${targetNick} был кикнут администратором` 
+                        }]);
+                        showRealtimeNotification("Успех", `Игрок ${targetNick} кикнут`, "success");
+                        break;
+
+                    case '/warn':
+                        const warnReason = parts.slice(2).join(' ') || "Нарушение правил";
+                        if (!targetNick) throw "Формат: /warn (ник) (причина)";
+                        const { data: profile } = await sb.from('profiles').select('warnings').eq('username', targetNick).single();
+                        const warnings = (profile?.warnings || 0) + 1;
+                        await sb.from('profiles').update({ warnings: warnings }).eq('username', targetNick);
+                        await sb.from('messages').insert([{
+                            sender: 'СИСТЕМА',
+                            receiver: targetNick,
+                            text: `⚠️ Предупреждение #${warnings}: ${warnReason}`
+                        }]);
+                        showRealtimeNotification("Успех", `Предупреждение #${warnings} выдано ${targetNick}`, "success");
+                        break;
+
+                    case '/clearwarns':
+                        if (!targetNick) throw "Формат: /clearwarns (ник)";
+                        await sb.from('profiles').update({ warnings: 0 }).eq('username', targetNick);
+                        showRealtimeNotification("Успех", `Предупреждения ${targetNick} очищены`, "success");
+                        break;
+
+                    case '/setlevel':
+                        const newLevel = parseInt(value);
+                        if (!targetNick || !newLevel || newLevel < 1 || newLevel > 100) throw "Формат: /setlevel (ник) (1-100)";
+                        const newXP = (newLevel - 1) * 1000;
+                        await sb.from('profiles').update({ xp: newXP }).eq('username', targetNick);
+                        showRealtimeNotification("Успех", `Уровень ${targetNick} установлен на ${newLevel}`, "success");
+                        break;
+
+                    case '/giveclan':
+                        const clanName = parts.slice(2).join(' ');
+                        if (!targetNick || !clanName) throw "Формат: /giveclan (ник) (название клана)";
+                        await sb.from('profiles').update({ clan: clanName }).eq('username', targetNick);
+                        showRealtimeNotification("Успех", `${targetNick} добавлен в клан ${clanName}`, "success");
+                        break;
+
+                    case '/createclan':
+                        const newClanName = parts.slice(1).join(' ');
+                        if (!newClanName) throw "Формат: /createclan (название)";
+                        await sb.from('clans').insert([{
+                            name: newClanName,
+                            created_by: u.username,
+                            created_at: new Date().toISOString()
+                        }]);
+                        showRealtimeNotification("Успех", `Клан ${newClanName} создан`, "success");
+                        break;
+
+                    case '/deleteclan':
+                        const deleteClanName = parts.slice(1).join(' ');
+                        if (!deleteClanName) throw "Формат: /deleteclan (название)";
+                        await sb.from('clans').delete().eq('name', deleteClanName);
+                        await sb.from('profiles').update({ clan: null }).eq('clan', deleteClanName);
+                        showRealtimeNotification("Успех", `Клан ${deleteClanName} удален`, "success");
+                        break;
+
+                    case '/jackpot':
+                        const jackpotAmount = parseInt(parts[1]);
+                        if (!jackpotAmount) throw "Формат: /jackpot (сумма)";
+                        await sb.from('jackpot_pool').upsert([{ id: 1, amount: jackpotAmount }]);
+                        showRealtimeNotification("Успех", `Джекпот установлен на ${jackpotAmount.toLocaleString()} BC`, "success");
+                        updateJackpotDisplay();
+                        break;
+
+                    case '/maintenance':
+                        const maintenanceMode = parts[1];
+                        if (!maintenanceMode || !['on', 'off'].includes(maintenanceMode)) throw "Формат: /maintenance (on/off)";
+                        const isOn = maintenanceMode === 'on';
+                        await sb.from('system_settings').upsert([{ id: 1, maintenance_mode: isOn }]);
+                        showRealtimeNotification("Успех", `Режим обслуживания ${isOn ? 'включен' : 'выключен'}`, "success");
+                        break;
+
+                    case '/announce':
+                        const announcement = parts.slice(1).join(' ');
+                        if (!announcement) throw "Формат: /announce (текст)";
+                        await sb.from('global_alerts').insert([{ 
+                            sender: 'ВАЖНОЕ ОБЪЯВЛЕНИЕ', 
+                            message: announcement,
+                            is_important: true
+                        }]);
+                        showRealtimeNotification("Успех", "Объявление отправлено всем", "success");
+                        break;
+
+                    case '/setrate':
+                        const gameName = parts[1];
+                        const newRate = parseFloat(parts[2]);
+                        if (!gameName || !newRate) throw "Формат: /setrate (игра) (шанс 0-1)";
+                        if (newRate < 0 || newRate > 1) throw "Шанс должен быть от 0 до 1";
+                        await sb.from('game_rates').upsert([{ 
+                            game: gameName,
+                            win_rate: newRate 
+                        }]);
+                        showRealtimeNotification("Успех", `Шанс ${gameName} установлен на ${(newRate * 100).toFixed(1)}%`, "success");
+                        break;
+
+                    case '/logs':
+                        if (!targetNick) throw "Формат: /logs (ник)";
+                        const { data: logs } = await sb.from('user_logs')
+                            .select('*')
+                            .eq('username', targetNick)
+                            .order('created_at', { ascending: false })
+                            .limit(10);
+                        console.log('Логи пользователя', targetNick, logs);
+                        showRealtimeNotification("Логи", `Проверьте консоль для ${targetNick}`, "info");
+                        break;
+
+                    case '/refund':
+                        const refundAmount = parseInt(value);
+                        if (!targetNick || !refundAmount) throw "Формат: /refund (ник) (сумма)";
+                        await sb.from('profiles').update({
+                            balance: sb.raw(`balance + ${refundAmount}`)
+                        }).eq('username', targetNick);
+                        await sb.from('messages').insert([{
+                            sender: 'СИСТЕМА',
+                            receiver: targetNick,
+                            text: `Вам возвращено ${refundAmount.toLocaleString()} BC администратором`
+                        }]);
+                        showRealtimeNotification("Успех", `Возврат ${refundAmount.toLocaleString()} BC для ${targetNick}`, "success");
                         break;
 
                     default:
