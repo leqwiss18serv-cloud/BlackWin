@@ -1095,6 +1095,8 @@
             { id: 'emerald', name: 'Изумрудный кейс', price: 7500000, color: 'green-500', minB: 3000000, maxB: 75000000, winRate: 0.08, minXP: 15000, maxXP: 75000 },
             { id: 'legendary', name: 'Легендарный кейс', price: 25000000, color: 'orange-500', minB: 10000000, maxB: 250000000, winRate: 0.06, minXP: 30000, maxXP: 150000 },
             { id: 'mythical', name: 'Мифический кейс', price: 100000000, color: 'purple-600', minB: 50000000, maxB: 1000000000, winRate: 0.04, minXP: 50000, maxXP: 300000 },
+            { id: 'cosmic', name: 'Космический кейс', price: 250000000, color: 'indigo-500', minB: 100000000, maxB: 2500000000, winRate: 0.03, minXP: 75000, maxXP: 400000 },
+            { id: 'elite', name: 'Элитный кейс', price: 750000000, color: 'pink-500', minB: 300000000, maxB: 7500000000, winRate: 0.015, minXP: 150000, maxXP: 750000 },
             { id: 'divine', name: 'Божественный кейс', price: 500000000, color: 'yellow-300', minB: 250000000, maxB: 5000000000, winRate: 0.02, minXP: 100000, maxXP: 500000 }
         ];
 
@@ -1259,6 +1261,16 @@
 
         async function startSession() {
             document.getElementById('auth-screen').classList.add('hidden');
+            
+            // Обновляем данные пользователя из базы данных при старте сессии
+            if (u && u.username) {
+                const { data } = await sb.from('profiles').select('*').eq('username', u.username).single();
+                if (data) {
+                    u = data;
+                    localStorage.setItem('bw_session', JSON.stringify(u));
+                }
+            }
+            
             hasGoldKey = localStorage.getItem('gold_key_' + u.username) === 'true';
             hasUltraKey = localStorage.getItem('ultra_key_' + u.username) === 'true';
             
