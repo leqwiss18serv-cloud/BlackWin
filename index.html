@@ -3726,31 +3726,41 @@
 
         async function updateUI() {
             if(!u) return;
-            document.getElementById('ui-nick').innerText = u.username;
-            document.getElementById('ui-balance').innerText = u.balance.toLocaleString() + ' BC';
-            document.getElementById('ui-bank-balance').innerText = u.bank_balance.toLocaleString() + ' BC';
-            document.getElementById('ui-xp-total').innerText = u.xp.toLocaleString();
+            
+            // Безопасное обновление элементов с проверками
+            const updateElement = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = value;
+            };
+            
+            updateElement('ui-nick', u.username);
+            updateElement('ui-balance', (u.balance || 0).toLocaleString() + ' BC');
+            updateElement('ui-bank-balance', (u.bank_balance || 0).toLocaleString() + ' BC');
+            updateElement('ui-xp-total', (u.xp || 0).toLocaleString());
 
-            const lvl = Math.floor(u.xp / 1000) + 1;
-            const xpInLevel = u.xp % 1000;
+            const lvl = Math.floor((u.xp || 0) / 1000) + 1;
+            const xpInLevel = (u.xp || 0) % 1000;
             const progress = (xpInLevel / 1000) * 100;
 
-            document.getElementById('bp-lvl').innerText = lvl;
-            document.getElementById('bp-xp-current').innerText = xpInLevel;
-            document.getElementById('bp-progress').style.width = progress + '%';
+            updateElement('bp-lvl', lvl);
+            updateElement('bp-xp-current', xpInLevel);
+            
+            const progressBar = document.getElementById('bp-progress');
+            if (progressBar) progressBar.style.width = progress + '%';
 
             const claimBtn = document.getElementById('bp-claim-btn');
-
-            const isClaimed = claimedLevels.includes(lvl);
-            
-            if (lvl > 0 && !isClaimed) {
-                claimBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                claimBtn.classList.add('red-btn');
-                claimBtn.innerText = `Забрать награду за ${lvl} LVL`;
-            } else {
-                claimBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                claimBtn.classList.remove('red-btn');
-                claimBtn.innerText = "Награда получена";
+            if (claimBtn) {
+                const isClaimed = claimedLevels.includes(lvl);
+                
+                if (lvl > 0 && !isClaimed) {
+                    claimBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    claimBtn.classList.add('red-btn');
+                    claimBtn.innerText = `Забрать награду за ${lvl} LVL`;
+                } else {
+                    claimBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    claimBtn.classList.remove('red-btn');
+                    claimBtn.innerText = "Награда получена";
+                }
             }
             
             // Обновляем прогресс квеста на уровень
@@ -3894,6 +3904,11 @@
         }
 
         async function updateData(b, x) {
+            if (!u) {
+                console.error('updateData called with null user');
+                return { b: 0, x: 0 };
+            }
+            
             // Применяем бонусы от ивентов
             let bonusMultiplier = 1;
             if (activeEvent) {
@@ -4053,7 +4068,17 @@
         }
 
         async function playBinaryGame(choice) {
+            if (!u) {
+                showRealtimeNotification("Ошибка", "Необходимо авторизоваться!", "error");
+                return;
+            }
+            
             const betInput = document.getElementById('binary-bet-amount');
+            if (!betInput) {
+                console.error('Binary bet input not found');
+                return;
+            }
+            
             const betAmount = parseInt(betInput.value);
             
             if (!betAmount || betAmount <= 0) {
@@ -4061,7 +4086,7 @@
                 return;
             }
             
-            if (betAmount > u.balance) {
+            if (betAmount > (u.balance || 0)) {
                 showRealtimeNotification("Ошибка", "Недостаточно BC для ставки!", "error");
                 return;
             }
