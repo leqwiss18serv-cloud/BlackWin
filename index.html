@@ -533,6 +533,41 @@
                     <p class="text-[9px] font-black text-purple-600 uppercase mb-2 italic">Колесо x10</p>
                     <span class="purple-btn px-4 py-2 rounded-xl text-[8px]">Шанс 10%</span>
                 </button>
+                <button onclick="openSlotsModal()" class="game-card text-center">
+                    <div class="game-icon">🎰</div>
+                    <p class="text-[9px] font-black text-red-600 uppercase mb-2 italic">Слоты</p>
+                    <span class="red-btn px-4 py-2 rounded-xl text-[8px]">До x50</span>
+                </button>
+                <button onclick="openBlackjackModal()" class="game-card text-center">
+                    <div class="game-icon">🃏</div>
+                    <p class="text-[9px] font-black text-blue-600 uppercase mb-2 italic">Блэкджек</p>
+                    <span class="blue-btn px-4 py-2 rounded-xl text-[8px]">21</span>
+                </button>
+                <button onclick="openMinesModal()" class="game-card text-center">
+                    <div class="game-icon">💣</div>
+                    <p class="text-[9px] font-black text-yellow-600 uppercase mb-2 italic">Мины</p>
+                    <span class="yellow-btn px-4 py-2 rounded-xl text-[8px]">5x5</span>
+                </button>
+                <button onclick="openTowerModal()" class="game-card text-center">
+                    <div class="game-icon">🏰</div>
+                    <p class="text-[9px] font-black text-purple-600 uppercase mb-2 italic">Башня</p>
+                    <span class="purple-btn px-4 py-2 rounded-xl text-[8px]">Этажи</span>
+                </button>
+                <button onclick="openPlinkoModal()" class="game-card text-center">
+                    <div class="game-icon">⚪</div>
+                    <p class="text-[9px] font-black text-green-600 uppercase mb-2 italic">Plinko</p>
+                    <span class="green-btn px-4 py-2 rounded-xl text-[8px]">Шар</span>
+                </button>
+                <button onclick="openJackpotModal()" class="game-card text-center">
+                    <div class="game-icon">💰</div>
+                    <p class="text-[9px] font-black text-red-600 uppercase mb-2 italic">Джекпот</p>
+                    <span class="red-btn px-4 py-2 rounded-xl text-[8px]" id="jackpot-display">0 BC</span>
+                </button>
+                <button onclick="openDuelModal()" class="game-card text-center">
+                    <div class="game-icon">⚔️</div>
+                    <p class="text-[9px] font-black text-yellow-600 uppercase mb-2 italic">Дуэль</p>
+                    <span class="yellow-btn px-4 py-2 rounded-xl text-[8px]">PvP</span>
+                </button>
             </div>
             
             <div class="glass p-8 rounded-[40px] text-center space-y-6">
@@ -724,6 +759,8 @@
         let crashGameActive = false;
         let userSessionId = null;
         let lastActivity = Date.now();
+        let pityCounter = {}; // Счетчик неудач для системы гарантии
+        const PITY_THRESHOLD = 10; // Гарантированный выигрыш после 10 неудач
 
         // Расширенный список кейсов
         const CASES = [
@@ -732,7 +769,12 @@
             { id: 'gold', name: 'Золотой кейс', price: 200000, color: 'yellow-500', minB: 20000, maxB: 300000, winRate: 0.25 },
             { id: 'black', name: 'Black Win Ultra', price: 500000, color: 'white', minB: 300000, maxB: 5000000, winRate: 0.2, minXP: 2000, maxXP: 5000 },
             { id: 'platinum', name: 'Платиновый кейс', price: 1000000, color: 'cyan-400', minB: 500000, maxB: 10000000, winRate: 0.15, minXP: 5000, maxXP: 15000 },
-            { id: 'diamond', name: 'Алмазный кейс', price: 5000000, color: 'blue-400', minB: 2000000, maxB: 50000000, winRate: 0.1, minXP: 10000, maxXP: 50000 }
+            { id: 'diamond', name: 'Алмазный кейс', price: 5000000, color: 'blue-400', minB: 2000000, maxB: 50000000, winRate: 0.1, minXP: 10000, maxXP: 50000 },
+            { id: 'ruby', name: 'Рубиновый кейс', price: 2500000, color: 'red-600', minB: 1000000, maxB: 25000000, winRate: 0.12, minXP: 8000, maxXP: 25000 },
+            { id: 'emerald', name: 'Изумрудный кейс', price: 7500000, color: 'green-500', minB: 3000000, maxB: 75000000, winRate: 0.08, minXP: 15000, maxXP: 75000 },
+            { id: 'legendary', name: 'Легендарный кейс', price: 25000000, color: 'orange-500', minB: 10000000, maxB: 250000000, winRate: 0.06, minXP: 30000, maxXP: 150000 },
+            { id: 'mythical', name: 'Мифический кейс', price: 100000000, color: 'purple-600', minB: 50000000, maxB: 1000000000, winRate: 0.04, minXP: 50000, maxXP: 300000 },
+            { id: 'divine', name: 'Божественный кейс', price: 500000000, color: 'yellow-300', minB: 250000000, maxB: 5000000000, winRate: 0.02, minXP: 100000, maxXP: 500000 }
         ];
 
         // Расширенный список заданий
@@ -3062,7 +3104,20 @@
                 return;
             }
             
-            const isWin = Math.random() < c.winRate;
+            // Инициализация pity счетчика для этого кейса
+            if (!pityCounter[id]) pityCounter[id] = 0;
+            
+            // Проверка pity системы - гарантированный выигрыш
+            let isWin;
+            let isPityWin = false;
+            if (pityCounter[id] >= PITY_THRESHOLD) {
+                isWin = true;
+                isPityWin = true;
+                pityCounter[id] = 0;
+            } else {
+                isWin = Math.random() < c.winRate;
+            }
+            
             let winB = 0;
             let winXP = 0;
             
@@ -3073,9 +3128,11 @@
                 } else {
                     winXP = 300;
                 }
+                pityCounter[id] = 0; // Сброс счетчика при выигрыше
             } else {
                 winB = Math.floor(Math.random() * (c.price * 0.6));
                 winXP = 100;
+                pityCounter[id]++; // Увеличение счетчика при проигрыше
             }
             
             if (isUsingKey) {
@@ -3089,10 +3146,12 @@
             checkAchievementProgress('cases', await getCasesOpenedCount());
             
             if (isWin) {
-                showRealtimeNotification("КЕЙС ОТКРЫТ!", `Вы получили: ${winB.toLocaleString()} BC и ${winXP} XP! ОКУП!`, "success");
+                const pityMsg = isPityWin ? ' [ГАРАНТИЯ]' : '';
+                showRealtimeNotification("КЕЙС ОТКРЫТ!", `Вы получили: ${winB.toLocaleString()} BC и ${winXP} XP! ОКУП!${pityMsg}`, "success");
                 updateUserStats('win', winB);
             } else {
-                showRealtimeNotification("КЕЙС ОТКРЫТ", `Вы получили: ${winB.toLocaleString()} BC и ${winXP} XP`, "info");
+                const pityInfo = pityCounter[id] > 0 ? ` (${pityCounter[id]}/${PITY_THRESHOLD} до гарантии)` : '';
+                showRealtimeNotification("КЕЙС ОТКРЫТ", `Вы получили: ${winB.toLocaleString()} BC и ${winXP} XP${pityInfo}`, "info");
                 if (winB - finalPrice < 0) {
                     updateUserStats('loss', finalPrice - winB);
                 }
