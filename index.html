@@ -3394,28 +3394,31 @@
                 
                 const cleanup = () => {
                     modal.classList.remove('active');
+                    modal.removeEventListener('click', outsideClickHandler);
+                };
+                
+                const outsideClickHandler = (e) => {
+                    if (e.target === modal) {
+                        cleanup();
+                        if (onCancel) onCancel();
+                        resolve(false);
+                    }
                 };
                 
                 newOkBtn.addEventListener('click', () => {
                     cleanup();
                     if (onConfirm) onConfirm();
                     resolve(true);
-                });
+                }, { once: true });
                 
                 newCancelBtn.addEventListener('click', () => {
                     cleanup();
                     if (onCancel) onCancel();
                     resolve(false);
-                });
+                }, { once: true });
                 
                 // Закрытие по клику вне модального окна
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        cleanup();
-                        if (onCancel) onCancel();
-                        resolve(false);
-                    }
-                });
+                modal.addEventListener('click', outsideClickHandler);
                 
                 modal.classList.add('active');
             });
@@ -3449,6 +3452,8 @@
                 
                 const cleanup = () => {
                     modal.classList.remove('active');
+                    input.removeEventListener('keypress', keypressHandler);
+                    modal.removeEventListener('click', outsideClickHandler);
                 };
                 
                 const submit = () => {
@@ -3458,29 +3463,33 @@
                     resolve(value || null);
                 };
                 
-                newOkBtn.addEventListener('click', submit);
-                
-                newCancelBtn.addEventListener('click', () => {
-                    cleanup();
-                    if (onCancel) onCancel();
-                    resolve(null);
-                });
-                
-                // Закрытие по Enter
-                input.addEventListener('keypress', (e) => {
+                const keypressHandler = (e) => {
                     if (e.key === 'Enter') {
                         submit();
                     }
-                });
+                };
                 
-                // Закрытие по клику вне модального окна
-                modal.addEventListener('click', (e) => {
+                const outsideClickHandler = (e) => {
                     if (e.target === modal) {
                         cleanup();
                         if (onCancel) onCancel();
                         resolve(null);
                     }
-                });
+                };
+                
+                newOkBtn.addEventListener('click', submit, { once: true });
+                
+                newCancelBtn.addEventListener('click', () => {
+                    cleanup();
+                    if (onCancel) onCancel();
+                    resolve(null);
+                }, { once: true });
+                
+                // Закрытие по Enter
+                input.addEventListener('keypress', keypressHandler);
+                
+                // Закрытие по клику вне модального окна
+                modal.addEventListener('click', outsideClickHandler);
                 
                 modal.classList.add('active');
                 setTimeout(() => input.focus(), 100);
@@ -4358,7 +4367,7 @@
             const val = await showPrompt(
                 type === 'dep' ? "Вклад в банк" : "Снятие с банка",
                 "Введите сумму:",
-                type === 'dep' ? u.balance.toString() : u.bank_balance.toString(),
+                type === 'dep' ? (u.balance || 0).toString() : (u.bank_balance || 0).toString(),
                 "1000"
             );
             const amt = parseInt(val);
