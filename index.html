@@ -417,6 +417,229 @@
         </div>
     </div>
 
+    <!-- Модальное окно Слотов -->
+    <div id="slots-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closeSlotsModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-red-600 mb-6 italic">СЛОТЫ 🎰</h2>
+            <p class="text-center text-gray-400 text-sm mb-6">Совпадите 3 символа! До x50</p>
+            
+            <div class="flex justify-center gap-2 mb-6">
+                <div class="bg-black/50 p-6 rounded-xl border-2 border-red-600/30">
+                    <span id="slot-1" class="text-5xl">🍒</span>
+                </div>
+                <div class="bg-black/50 p-6 rounded-xl border-2 border-red-600/30">
+                    <span id="slot-2" class="text-5xl">🍒</span>
+                </div>
+                <div class="bg-black/50 p-6 rounded-xl border-2 border-red-600/30">
+                    <span id="slot-3" class="text-5xl">🍒</span>
+                </div>
+            </div>
+            
+            <input type="number" id="slots-bet-amount" placeholder="СУММА СТАВКИ" class="bet-input" min="1">
+            
+            <div class="grid grid-cols-4 gap-2 mb-6">
+                <button onclick="setQuickBetSlots(100)" class="quick-bet-btn">100</button>
+                <button onclick="setQuickBetSlots(500)" class="quick-bet-btn">500</button>
+                <button onclick="setQuickBetSlots(1000)" class="quick-bet-btn">1K</button>
+                <button onclick="setQuickBetSlots(5000)" class="quick-bet-btn">5K</button>
+                <button onclick="setQuickBetSlots('half')" class="quick-bet-btn text-red-600">1/2</button>
+                <button onclick="setQuickBetSlots('max')" class="quick-bet-btn text-red-600">MAX</button>
+                <button onclick="setQuickBetSlots('all')" class="quick-bet-btn text-red-600">ВСЁ</button>
+                <button onclick="setQuickBetSlots('clear')" class="quick-bet-btn text-gray-500">СБРОС</button>
+            </div>
+            
+            <button onclick="playSlots()" class="red-btn w-full py-4 rounded-2xl font-black">КРУТИТЬ</button>
+            <div id="slots-history" class="mt-4 space-y-2 max-h-32 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Блэкджека -->
+    <div id="blackjack-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closeBlackjackModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-blue-600 mb-6 italic">БЛЭКДЖЕК 🃏</h2>
+            
+            <div class="space-y-4 mb-6">
+                <div class="bg-black/50 p-4 rounded-xl">
+                    <p class="text-xs text-gray-500 mb-2">Дилер:</p>
+                    <div id="dealer-cards" class="flex gap-2 mb-2">
+                        <div class="w-12 h-16 bg-red-600/20 rounded border border-red-600/50 flex items-center justify-center">?</div>
+                    </div>
+                    <p id="dealer-score" class="text-sm font-black text-red-600">Счет: ?</p>
+                </div>
+                
+                <div class="bg-black/50 p-4 rounded-xl">
+                    <p class="text-xs text-gray-500 mb-2">Вы:</p>
+                    <div id="player-cards" class="flex gap-2 mb-2">
+                        <div class="w-12 h-16 bg-blue-600/20 rounded border border-blue-600/50 flex items-center justify-center">?</div>
+                    </div>
+                    <p id="player-score" class="text-sm font-black text-blue-600">Счет: ?</p>
+                </div>
+            </div>
+            
+            <div id="blackjack-bet-phase">
+                <input type="number" id="blackjack-bet-amount" placeholder="СУММА СТАВКИ" class="bet-input" min="1">
+                <div class="grid grid-cols-4 gap-2 mb-6">
+                    <button onclick="setQuickBetBlackjack(100)" class="quick-bet-btn">100</button>
+                    <button onclick="setQuickBetBlackjack(500)" class="quick-bet-btn">500</button>
+                    <button onclick="setQuickBetBlackjack(1000)" class="quick-bet-btn">1K</button>
+                    <button onclick="setQuickBetBlackjack(5000)" class="quick-bet-btn">5K</button>
+                </div>
+                <button onclick="startBlackjack()" class="red-btn w-full py-4 rounded-2xl font-black">НАЧАТЬ</button>
+            </div>
+            
+            <div id="blackjack-play-phase" class="hidden space-y-3">
+                <div class="flex gap-3">
+                    <button onclick="blackjackHit()" class="flex-1 blue-btn py-4 rounded-2xl font-black">ЕЩЁ</button>
+                    <button onclick="blackjackStand()" class="flex-1 red-btn py-4 rounded-2xl font-black">ХВАТИТ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Мин -->
+    <div id="mines-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closeMinesModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-yellow-600 mb-4 italic">МИНЫ 💣</h2>
+            <p class="text-center text-xs mb-2">Множитель: <span id="mines-multiplier" class="text-yellow-500 font-black">1.00x</span></p>
+            <p class="text-center text-xs mb-4">Открыто: <span id="mines-revealed" class="text-green-500">0</span>/25</p>
+            
+            <div id="mines-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
+            
+            <div id="mines-bet-phase">
+                <input type="number" id="mines-bet-amount" placeholder="СУММА СТАВКИ" class="bet-input mb-4" min="1">
+                <div class="grid grid-cols-4 gap-2 mb-4">
+                    <button onclick="setQuickBetMines(100)" class="quick-bet-btn">100</button>
+                    <button onclick="setQuickBetMines(500)" class="quick-bet-btn">500</button>
+                    <button onclick="setQuickBetMines(1000)" class="quick-bet-btn">1K</button>
+                    <button onclick="setQuickBetMines(5000)" class="quick-bet-btn">5K</button>
+                </div>
+                <button onclick="startMines()" class="yellow-btn w-full py-4 rounded-2xl font-black">НАЧАТЬ</button>
+            </div>
+            
+            <button id="mines-cashout-btn" onclick="cashoutMines()" class="hidden green-btn w-full py-4 rounded-2xl font-black">ЗАБРАТЬ</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно Башни -->
+    <div id="tower-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closeTowerModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-purple-600 mb-4 italic">БАШНЯ 🏰</h2>
+            <p class="text-center text-xs mb-2">Этаж: <span id="tower-floor" class="text-purple-500 font-black">0</span>/10</p>
+            <p class="text-center text-xs mb-4">Множитель: <span id="tower-multiplier" class="text-yellow-500 font-black">1.00x</span></p>
+            
+            <div id="tower-grid" class="space-y-2 mb-4"></div>
+            
+            <div id="tower-bet-phase">
+                <input type="number" id="tower-bet-amount" placeholder="СУММА СТАВКИ" class="bet-input mb-4" min="1">
+                <div class="grid grid-cols-4 gap-2 mb-4">
+                    <button onclick="setQuickBetTower(100)" class="quick-bet-btn">100</button>
+                    <button onclick="setQuickBetTower(500)" class="quick-bet-btn">500</button>
+                    <button onclick="setQuickBetTower(1000)" class="quick-bet-btn">1K</button>
+                    <button onclick="setQuickBetTower(5000)" class="quick-bet-btn">5K</button>
+                </div>
+                <button onclick="startTower()" class="purple-btn w-full py-4 rounded-2xl font-black">НАЧАТЬ</button>
+            </div>
+            
+            <button id="tower-cashout-btn" onclick="cashoutTower()" class="hidden green-btn w-full py-4 rounded-2xl font-black">ЗАБРАТЬ</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно Plinko -->
+    <div id="plinko-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closePlinkoModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-green-600 mb-6 italic">PLINKO ⚪</h2>
+            <p class="text-center text-gray-400 text-sm mb-6">Бросьте шар и выиграйте!</p>
+            
+            <div id="plinko-board" class="bg-black/50 h-64 rounded-xl border-2 border-green-600/30 mb-4 flex items-end justify-around p-2">
+                <div class="text-center"><span class="text-xs text-red-600 font-black">x50</span></div>
+                <div class="text-center"><span class="text-xs text-orange-500 font-black">x10</span></div>
+                <div class="text-center"><span class="text-xs text-yellow-500 font-black">x5</span></div>
+                <div class="text-center"><span class="text-xs text-green-500 font-black">x2</span></div>
+                <div class="text-center"><span class="text-xs text-blue-500 font-black">x1</span></div>
+                <div class="text-center"><span class="text-xs text-green-500 font-black">x2</span></div>
+                <div class="text-center"><span class="text-xs text-yellow-500 font-black">x5</span></div>
+                <div class="text-center"><span class="text-xs text-orange-500 font-black">x10</span></div>
+                <div class="text-center"><span class="text-xs text-red-600 font-black">x50</span></div>
+            </div>
+            
+            <input type="number" id="plinko-bet-amount" placeholder="СУММА СТАВКИ" class="bet-input" min="1">
+            <div class="grid grid-cols-4 gap-2 mb-6">
+                <button onclick="setQuickBetPlinko(100)" class="quick-bet-btn">100</button>
+                <button onclick="setQuickBetPlinko(500)" class="quick-bet-btn">500</button>
+                <button onclick="setQuickBetPlinko(1000)" class="quick-bet-btn">1K</button>
+                <button onclick="setQuickBetPlinko(5000)" class="quick-bet-btn">5K</button>
+            </div>
+            
+            <button onclick="playPlinko()" class="green-btn w-full py-4 rounded-2xl font-black">БРОСИТЬ ШАР</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно Джекпота -->
+    <div id="jackpot-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closeJackpotModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-red-600 mb-4 italic">ДЖЕКПОТ 💰</h2>
+            
+            <div class="bg-gradient-to-r from-yellow-600 to-red-600 p-6 rounded-2xl mb-6 text-center">
+                <p class="text-xs text-white/70 mb-1">ПРИЗОВОЙ ФОНД</p>
+                <p id="jackpot-pool" class="text-3xl font-black text-white italic">0 BC</p>
+            </div>
+            
+            <div class="bg-black/50 p-4 rounded-xl mb-4">
+                <p class="text-xs text-gray-400 mb-2">Участники:</p>
+                <div id="jackpot-participants" class="space-y-1 max-h-32 overflow-y-auto">
+                    <p class="text-xs text-gray-500">Пока никого...</p>
+                </div>
+            </div>
+            
+            <input type="number" id="jackpot-bet-amount" placeholder="СУММА СТАВКИ (мин. 1000)" class="bet-input" min="1000">
+            <div class="grid grid-cols-4 gap-2 mb-6">
+                <button onclick="setQuickBetJackpot(1000)" class="quick-bet-btn">1K</button>
+                <button onclick="setQuickBetJackpot(5000)" class="quick-bet-btn">5K</button>
+                <button onclick="setQuickBetJackpot(10000)" class="quick-bet-btn">10K</button>
+                <button onclick="setQuickBetJackpot(50000)" class="quick-bet-btn">50K</button>
+            </div>
+            
+            <button onclick="joinJackpot()" class="red-btn w-full py-4 rounded-2xl font-black">ВСТУПИТЬ</button>
+            <p class="text-xs text-gray-400 text-center mt-4">Розыгрыш каждые 5 минут</p>
+        </div>
+    </div>
+
+    <!-- Модальное окно Дуэли -->
+    <div id="duel-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closeDuelModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-yellow-600 mb-6 italic">ДУЭЛЬ ⚔️</h2>
+            <p class="text-center text-gray-400 text-sm mb-6">Сразитесь с другом!</p>
+            
+            <div class="space-y-4 mb-6">
+                <input type="text" id="duel-opponent" placeholder="НИК ПРОТИВНИКА" class="w-full p-4 rounded-2xl text-center font-black uppercase bg-black/50 border border-white/10">
+                <input type="number" id="duel-bet-amount" placeholder="СУММА СТАВКИ" class="bet-input" min="100">
+            </div>
+            
+            <div class="grid grid-cols-4 gap-2 mb-6">
+                <button onclick="setQuickBetDuel(100)" class="quick-bet-btn">100</button>
+                <button onclick="setQuickBetDuel(500)" class="quick-bet-btn">500</button>
+                <button onclick="setQuickBetDuel(1000)" class="quick-bet-btn">1K</button>
+                <button onclick="setQuickBetDuel(5000)" class="quick-bet-btn">5K</button>
+            </div>
+            
+            <button onclick="createDuel()" class="yellow-btn w-full py-4 rounded-2xl font-black">СОЗДАТЬ ДУЭЛЬ</button>
+            
+            <div class="mt-6">
+                <p class="text-xs text-gray-400 mb-2">Активные дуэли:</p>
+                <div id="active-duels" class="space-y-2 max-h-40 overflow-y-auto">
+                    <p class="text-xs text-gray-500">Нет активных дуэлей</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Модальное окно ключа -->
     <div id="key-modal" class="fixed inset-0 z-[600] bg-black/98 flex items-center justify-center p-6 hidden">
         <div class="glass p-8 rounded-[40px] w-full max-w-sm text-center border-2 border-yellow-500">
@@ -533,6 +756,41 @@
                     <p class="text-[9px] font-black text-purple-600 uppercase mb-2 italic">Колесо x10</p>
                     <span class="purple-btn px-4 py-2 rounded-xl text-[8px]">Шанс 10%</span>
                 </button>
+                <button onclick="openSlotsModal()" class="game-card text-center">
+                    <div class="game-icon">🎰</div>
+                    <p class="text-[9px] font-black text-red-600 uppercase mb-2 italic">Слоты</p>
+                    <span class="red-btn px-4 py-2 rounded-xl text-[8px]">До x50</span>
+                </button>
+                <button onclick="openBlackjackModal()" class="game-card text-center">
+                    <div class="game-icon">🃏</div>
+                    <p class="text-[9px] font-black text-blue-600 uppercase mb-2 italic">Блэкджек</p>
+                    <span class="blue-btn px-4 py-2 rounded-xl text-[8px]">21</span>
+                </button>
+                <button onclick="openMinesModal()" class="game-card text-center">
+                    <div class="game-icon">💣</div>
+                    <p class="text-[9px] font-black text-yellow-600 uppercase mb-2 italic">Мины</p>
+                    <span class="yellow-btn px-4 py-2 rounded-xl text-[8px]">5x5</span>
+                </button>
+                <button onclick="openTowerModal()" class="game-card text-center">
+                    <div class="game-icon">🏰</div>
+                    <p class="text-[9px] font-black text-purple-600 uppercase mb-2 italic">Башня</p>
+                    <span class="purple-btn px-4 py-2 rounded-xl text-[8px]">Этажи</span>
+                </button>
+                <button onclick="openPlinkoModal()" class="game-card text-center">
+                    <div class="game-icon">⚪</div>
+                    <p class="text-[9px] font-black text-green-600 uppercase mb-2 italic">Plinko</p>
+                    <span class="green-btn px-4 py-2 rounded-xl text-[8px]">Шар</span>
+                </button>
+                <button onclick="openJackpotModal()" class="game-card text-center">
+                    <div class="game-icon">💰</div>
+                    <p class="text-[9px] font-black text-red-600 uppercase mb-2 italic">Джекпот</p>
+                    <span class="red-btn px-4 py-2 rounded-xl text-[8px]" id="jackpot-display">0 BC</span>
+                </button>
+                <button onclick="openDuelModal()" class="game-card text-center">
+                    <div class="game-icon">⚔️</div>
+                    <p class="text-[9px] font-black text-yellow-600 uppercase mb-2 italic">Дуэль</p>
+                    <span class="yellow-btn px-4 py-2 rounded-xl text-[8px]">PvP</span>
+                </button>
             </div>
             
             <div class="glass p-8 rounded-[40px] text-center space-y-6">
@@ -636,6 +894,72 @@
             </div>
         </section>
 
+        <section id="s-settings" class="section space-y-6">
+            <div class="glass p-6 rounded-[35px]">
+                <h2 class="font-black text-2xl text-center mb-6 italic uppercase text-red-600">НАСТРОЙКИ</h2>
+                
+                <!-- VIP Статус -->
+                <div class="bg-gradient-to-r from-yellow-600 to-orange-600 p-4 rounded-2xl mb-6" id="vip-status-card" style="display:none;">
+                    <p class="text-center text-white font-black">⭐ VIP СТАТУС АКТИВЕН ⭐</p>
+                    <p class="text-center text-xs text-white/80" id="vip-until-text">До: --</p>
+                </div>
+                
+                <!-- Тема -->
+                <div class="mb-6">
+                    <h3 class="font-black text-sm mb-3">🎨 ТЕМА</h3>
+                    <div class="flex gap-2">
+                        <button onclick="setTheme('dark')" id="btn-theme-dark" class="flex-1 bg-black border border-red-600 py-3 rounded-xl font-black text-xs">ТЕМНАЯ</button>
+                        <button onclick="setTheme('light')" id="btn-theme-light" class="flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs">СВЕТЛАЯ</button>
+                    </div>
+                </div>
+                
+                <!-- Звук -->
+                <div class="mb-6">
+                    <h3 class="font-black text-sm mb-3">🔊 ЗВУК</h3>
+                    <div class="flex gap-2">
+                        <button onclick="toggleSound(true)" id="btn-sound-on" class="flex-1 red-btn py-3 rounded-xl font-black text-xs">ВКЛ</button>
+                        <button onclick="toggleSound(false)" id="btn-sound-off" class="flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs">ВЫКЛ</button>
+                    </div>
+                </div>
+                
+                <!-- Уведомления -->
+                <div class="mb-6">
+                    <h3 class="font-black text-sm mb-3">🔔 УВЕДОМЛЕНИЯ</h3>
+                    <div class="flex gap-2">
+                        <button onclick="toggleNotifications(true)" id="btn-notif-on" class="flex-1 red-btn py-3 rounded-xl font-black text-xs">ВКЛ</button>
+                        <button onclick="toggleNotifications(false)" id="btn-notif-off" class="flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs">ВЫКЛ</button>
+                    </div>
+                </div>
+                
+                <!-- Реферальная система -->
+                <div class="mb-6">
+                    <h3 class="font-black text-sm mb-3">💰 РЕФЕРАЛЬНАЯ ПРОГРАММА</h3>
+                    <p class="text-xs text-gray-400 mb-2">Ваш реферальный код:</p>
+                    <div class="flex gap-2 mb-2">
+                        <input type="text" id="referral-code-display" readonly class="flex-1 p-3 rounded-xl text-center font-black bg-black/50 border border-red-600/30">
+                        <button onclick="copyReferralCode()" class="green-btn px-6 rounded-xl font-black">КОПИРОВАТЬ</button>
+                    </div>
+                    <p class="text-xs text-gray-400">За каждого приглашенного друга вы получаете 10,000 BC!</p>
+                </div>
+                
+                <!-- Экспорт статистики -->
+                <div class="mb-6">
+                    <h3 class="font-black text-sm mb-3">📊 ЭКСПОРТ ДАННЫХ</h3>
+                    <button onclick="exportStats()" class="w-full blue-btn py-4 rounded-xl font-black text-xs">ЭКСПОРТИРОВАТЬ СТАТИСТИКУ (JSON)</button>
+                </div>
+                
+                <!-- Колесо фортуны -->
+                <div class="mb-6">
+                    <h3 class="font-black text-sm mb-3">🎰 ЕЖЕДНЕВНОЕ КОЛЕСО ФОРТУНЫ</h3>
+                    <div class="text-center mb-4">
+                        <p class="text-xs text-gray-400 mb-2">Следующее вращение через:</p>
+                        <p id="wheel-timer" class="text-2xl font-black text-yellow-500">00:00:00</p>
+                    </div>
+                    <button onclick="spinWheelOfFortune()" id="spin-wheel-btn" class="w-full yellow-btn py-4 rounded-xl font-black">КРУТИТЬ КОЛЕСО</button>
+                </div>
+            </div>
+        </section>
+
         <section id="s-admin" class="section space-y-6">
             <div class="glass p-8 rounded-[40px] border-t-4 border-red-600 shadow-2xl">
                 <h2 class="font-black text-2xl mb-2 italic text-red-600 uppercase">ADMIN PANEL</h2>
@@ -659,6 +983,22 @@
                     <p><b>/setdaily (ник) (число)</b> — Установить ежедневный бонус</p>
                     <p><b>/resetstats (ник)</b> — Сбросить статистику</p>
                     <p><b>/clearmessages (ник)</b> — Очистить сообщения</p>
+                    <p class="text-yellow-500 mt-2">НОВЫЕ КОМАНДЫ:</p>
+                    <p><b>/mute (ник) (минуты)</b> — Замутить игрока</p>
+                    <p><b>/unmute (ник)</b> — Размутить игрока</p>
+                    <p><b>/kick (ник)</b> — Кикнуть из сессии</p>
+                    <p><b>/warn (ник) (причина)</b> — Выдать предупреждение</p>
+                    <p><b>/clearwarns (ник)</b> — Очистить предупреждения</p>
+                    <p><b>/setlevel (ник) (уровень)</b> — Установить уровень BP</p>
+                    <p><b>/giveclan (ник) (клан)</b> — Добавить в клан</p>
+                    <p><b>/createclan (название)</b> — Создать клан</p>
+                    <p><b>/deleteclan (название)</b> — Удалить клан</p>
+                    <p><b>/jackpot (сумма)</b> — Установить джекпот</p>
+                    <p><b>/maintenance (on/off)</b> — Режим обслуживания</p>
+                    <p><b>/announce (текст)</b> — Важное объявление</p>
+                    <p><b>/setrate (игра) (шанс)</b> — Изменить шанс выигрыша</p>
+                    <p><b>/logs (ник)</b> — Просмотр логов игрока</p>
+                    <p><b>/refund (ник) (сумма)</b> — Возврат средств</p>
                 </div>
             </div>
             
@@ -697,6 +1037,7 @@
         <button onclick="showSection('bank')" id="n-bank" class="p-3 text-xl">🏦</button>
         <button onclick="showSection('social')" id="n-social" class="p-3 text-xl">👥</button>
         <button onclick="showSection('top')" id="n-top" class="p-3 text-xl">🏆</button>
+        <button onclick="showSection('settings')" id="n-settings" class="p-3 text-xl">⚙️</button>
         <button onclick="showSection('admin')" id="n-admin" class="p-3 text-xl hidden">🛡️</button>
     </nav>
 
@@ -724,6 +1065,23 @@
         let crashGameActive = false;
         let userSessionId = null;
         let lastActivity = Date.now();
+        let pityCounter = {}; // Счетчик неудач для системы гарантии
+        const PITY_THRESHOLD = 10; // Гарантированный выигрыш после 10 неудач
+        
+        // Настройки пользователя
+        let userSettings = {
+            darkTheme: true,
+            soundEnabled: true,
+            notificationsEnabled: true
+        };
+        
+        // VIP статус
+        let isVIP = false;
+        let vipUntil = null;
+        
+        // Реферальная система
+        let referralCode = '';
+        let referredBy = null;
 
         // Расширенный список кейсов
         const CASES = [
@@ -732,7 +1090,12 @@
             { id: 'gold', name: 'Золотой кейс', price: 200000, color: 'yellow-500', minB: 20000, maxB: 300000, winRate: 0.25 },
             { id: 'black', name: 'Black Win Ultra', price: 500000, color: 'white', minB: 300000, maxB: 5000000, winRate: 0.2, minXP: 2000, maxXP: 5000 },
             { id: 'platinum', name: 'Платиновый кейс', price: 1000000, color: 'cyan-400', minB: 500000, maxB: 10000000, winRate: 0.15, minXP: 5000, maxXP: 15000 },
-            { id: 'diamond', name: 'Алмазный кейс', price: 5000000, color: 'blue-400', minB: 2000000, maxB: 50000000, winRate: 0.1, minXP: 10000, maxXP: 50000 }
+            { id: 'diamond', name: 'Алмазный кейс', price: 5000000, color: 'blue-400', minB: 2000000, maxB: 50000000, winRate: 0.1, minXP: 10000, maxXP: 50000 },
+            { id: 'ruby', name: 'Рубиновый кейс', price: 2500000, color: 'red-600', minB: 1000000, maxB: 25000000, winRate: 0.12, minXP: 8000, maxXP: 25000 },
+            { id: 'emerald', name: 'Изумрудный кейс', price: 7500000, color: 'green-500', minB: 3000000, maxB: 75000000, winRate: 0.08, minXP: 15000, maxXP: 75000 },
+            { id: 'legendary', name: 'Легендарный кейс', price: 25000000, color: 'orange-500', minB: 10000000, maxB: 250000000, winRate: 0.06, minXP: 30000, maxXP: 150000 },
+            { id: 'mythical', name: 'Мифический кейс', price: 100000000, color: 'purple-600', minB: 50000000, maxB: 1000000000, winRate: 0.04, minXP: 50000, maxXP: 300000 },
+            { id: 'divine', name: 'Божественный кейс', price: 500000000, color: 'yellow-300', minB: 250000000, maxB: 5000000000, winRate: 0.02, minXP: 100000, maxXP: 500000 }
         ];
 
         // Расширенный список заданий
@@ -750,7 +1113,21 @@
             { id: 'claim_daily', name: 'Забрать бонусы', description: 'Забрать ежедневный бонус 5 раз', required: 5, reward: 2000, type: 'claim_daily' },
             { id: 'win_streak', name: 'Серия побед', description: 'Выиграть 5 раз подряд в любых играх', required: 5, reward: 3000, type: 'win_streak' },
             { id: 'refer_friend', name: 'Пригласить друга', description: 'Пригласить друга по реферальной ссылке', required: 1, reward: 10000, type: 'refer_friend' },
-            { id: 'complete_all', name: 'Мастер заданий', description: 'Выполнить все задания за день', required: 1, reward: 5000, type: 'complete_all' }
+            { id: 'complete_all', name: 'Мастер заданий', description: 'Выполнить все задания за день', required: 1, reward: 5000, type: 'complete_all' },
+            // Новые квесты
+            { id: 'win_streak_10', name: 'Серия из 10', description: 'Выиграть 10 раз подряд', required: 10, reward: 10000, type: 'win_streak' },
+            { id: 'balance_1m', name: 'Миллионер', description: 'Накопить баланс 1.000.000 BC', required: 1000000, reward: 50000, type: 'balance_milestone' },
+            { id: 'balance_10m', name: 'Магнат', description: 'Накопить баланс 10.000.000 BC', required: 10000000, reward: 200000, type: 'balance_milestone' },
+            { id: 'open_ruby_case', name: 'Рубиновая удача', description: 'Открыть Рубиновый кейс', required: 1, reward: 5000, type: 'open_case_type' },
+            { id: 'open_legendary_case', name: 'Легендарный игрок', description: 'Открыть Легендарный кейс', required: 1, reward: 25000, type: 'open_case_type' },
+            { id: 'invite_friends_3', name: 'Вербовщик', description: 'Пригласить 3 друзей', required: 3, reward: 15000, type: 'invite_friends' },
+            { id: 'duel_play', name: 'Дуэлянт', description: 'Участвовать в 5 PvP дуэлях', required: 5, reward: 8000, type: 'duel_play' },
+            { id: 'duel_win', name: 'Победитель дуэлей', description: 'Выиграть 3 дуэли', required: 3, reward: 12000, type: 'duel_win' },
+            { id: 'jackpot_join', name: 'Счастливчик', description: 'Участвовать в Джекпоте 3 раза', required: 3, reward: 5000, type: 'jackpot_join' },
+            { id: 'jackpot_win', name: 'Джекпот-король', description: 'Выиграть в Джекпоте', required: 1, reward: 50000, type: 'jackpot_win' },
+            { id: 'play_slots', name: 'Игрок в слоты', description: 'Сыграть в Слоты 20 раз', required: 20, reward: 5000, type: 'play_slots' },
+            { id: 'play_mines', name: 'Сапер', description: 'Сыграть в Мины 15 раз', required: 15, reward: 6000, type: 'play_mines' },
+            { id: 'achievement_collector', name: 'Коллекционер', description: 'Собрать 10 достижений', required: 10, reward: 20000, type: 'achievements_count' }
         ];
 
         // Система достижений
@@ -772,9 +1149,21 @@
             { id: 'friend_master', name: 'Душа компании', description: 'Иметь 20 друзей', reward: 10000, type: 'friends', required: 20 },
             { id: 'vip_member', name: 'VIP статус', description: 'Получить VIP статус', reward: 15000, type: 'vip', required: 1 },
             { id: 'event_participant', name: 'Ивентовый', description: 'Участвовать в 10 ивентах', reward: 5000, type: 'events', required: 10 },
-            { id: 'all_games', name: 'Мастер игр', description: 'Сыграть во все игры', reward: 10000, type: 'games', required: 6 },
+            { id: 'all_games', name: 'Мастер игр', description: 'Сыграть во все игры', reward: 10000, type: 'games', required: 13 },
             { id: 'chat_active', name: 'Общительный', description: 'Написать 100 сообщений', reward: 5000, type: 'chat', required: 100 },
-            { id: 'perfect_day', name: 'Идеальный день', description: 'Выполнить все задания за день', reward: 10000, type: 'quests', required: 5 }
+            { id: 'perfect_day', name: 'Идеальный день', description: 'Выполнить все задания за день', reward: 10000, type: 'quests', required: 5 },
+            // Новые достижения для уровней 50-100
+            { id: 'level_75', name: '75 уровень', description: 'Достигнуть 75 уровня', reward: 100000, type: 'level', required: 75 },
+            { id: 'level_100', name: '100 уровень', description: 'Достигнуть 100 уровня (МАКС)', reward: 500000, type: 'level', required: 100 },
+            { id: 'rich_100m', name: 'Олигарх', description: 'Накопить 100.000.000 BC', reward: 500000, type: 'balance', required: 100000000 },
+            { id: 'rich_1b', name: 'Миллиардер', description: 'Накопить 1.000.000.000 BC', reward: 1000000, type: 'balance', required: 1000000000 },
+            { id: 'case_opener_100', name: 'Маньяк кейсов', description: 'Открыть 100 кейсов', reward: 50000, type: 'cases', required: 100 },
+            { id: 'case_opener_500', name: 'Легенда кейсов', description: 'Открыть 500 кейсов', reward: 200000, type: 'cases', required: 500 },
+            { id: 'duel_master', name: 'Мастер дуэлей', description: 'Выиграть 10 дуэлей', reward: 50000, type: 'duels', required: 10 },
+            { id: 'jackpot_master', name: 'Мастер джекпота', description: 'Выиграть джекпот 3 раза', reward: 100000, type: 'jackpot', required: 3 },
+            { id: 'slots_master', name: 'Мастер слотов', description: 'Выиграть x50 в слотах', reward: 25000, type: 'slots', required: 1 },
+            { id: 'mines_survivor', name: 'Выживший сапер', description: 'Открыть 20 ячеек в Минах', reward: 30000, type: 'mines', required: 20 },
+            { id: 'tower_climber', name: 'Покоритель башни', description: 'Дойти до 10 этажа в Башне', reward: 40000, type: 'tower', required: 10 }
         ];
 
         // Новые игры с хорошими шансами
@@ -906,6 +1295,9 @@
             // Запускаем polling для ивентов
             startEventPolling();
             
+            // Обновляем джекпот
+            updateJackpotDisplay();
+            
             // Проверка админ-прав
             if (u.is_admin) {
                 document.getElementById('n-admin').classList.remove('hidden');
@@ -920,9 +1312,35 @@
             loadFriendRequests();
             loadUnreadMessages();
             startQuestsTimer();
+            initializeSettings();
             
             // Показываем приветственное сообщение
             showRealtimeNotification("Добро пожаловать", `С возвращением, ${u.username}!`, "info");
+        }
+
+        let jackpotUpdateTimer = null;
+        
+        async function updateJackpotDisplay() {
+            const { data } = await sb.from('jackpot_pool').select('*').limit(1).single();
+            if (data && data.amount) {
+                const displayElement = document.getElementById('jackpot-display');
+                if (displayElement) {
+                    const amount = data.amount;
+                    if (amount >= 1000000000) {
+                        displayElement.innerText = (amount / 1000000000).toFixed(1) + 'B BC';
+                    } else if (amount >= 1000000) {
+                        displayElement.innerText = (amount / 1000000).toFixed(1) + 'M BC';
+                    } else {
+                        displayElement.innerText = (amount / 1000).toFixed(0) + 'K BC';
+                    }
+                }
+            }
+            
+            // Обновляем каждые 30 секунд, только если пользователь залогинен
+            if (u) {
+                if (jackpotUpdateTimer) clearTimeout(jackpotUpdateTimer);
+                jackpotUpdateTimer = setTimeout(updateJackpotDisplay, 30000);
+            }
         }
 
         async function updateOnlineStatus(online = true) {
@@ -1020,6 +1438,196 @@
             
             await sb.from('user_stats').update(userStats).eq('username', u.username);
             updateStatsUI();
+        }
+
+        // === НАСТРОЙКИ И ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ===
+        
+        function setTheme(theme) {
+            userSettings.darkTheme = (theme === 'dark');
+            localStorage.setItem('theme', theme);
+            
+            document.getElementById('btn-theme-dark').className = theme === 'dark' 
+                ? 'flex-1 red-btn py-3 rounded-xl font-black text-xs'
+                : 'flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs';
+            document.getElementById('btn-theme-light').className = theme === 'light' 
+                ? 'flex-1 red-btn py-3 rounded-xl font-black text-xs'
+                : 'flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs';
+            
+            if (theme === 'light') {
+                document.body.style.background = '#f5f5f5';
+                document.body.style.color = '#000';
+            } else {
+                document.body.style.background = 'var(--dark)';
+                document.body.style.color = 'white';
+            }
+            
+            showRealtimeNotification("Тема изменена", `Активна ${theme === 'dark' ? 'темная' : 'светлая'} тема`, "info");
+        }
+        
+        function toggleSound(enabled) {
+            userSettings.soundEnabled = enabled;
+            localStorage.setItem('sound', enabled);
+            
+            document.getElementById('btn-sound-on').className = enabled 
+                ? 'flex-1 red-btn py-3 rounded-xl font-black text-xs'
+                : 'flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs';
+            document.getElementById('btn-sound-off').className = !enabled 
+                ? 'flex-1 red-btn py-3 rounded-xl font-black text-xs'
+                : 'flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs';
+            
+            showRealtimeNotification("Звук", `Звук ${enabled ? 'включен' : 'выключен'}`, "info");
+        }
+        
+        function toggleNotifications(enabled) {
+            userSettings.notificationsEnabled = enabled;
+            localStorage.setItem('notifications', enabled);
+            
+            document.getElementById('btn-notif-on').className = enabled 
+                ? 'flex-1 red-btn py-3 rounded-xl font-black text-xs'
+                : 'flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs';
+            document.getElementById('btn-notif-off').className = !enabled 
+                ? 'flex-1 red-btn py-3 rounded-xl font-black text-xs'
+                : 'flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs';
+            
+            showRealtimeNotification("Уведомления", `Уведомления ${enabled ? 'включены' : 'выключены'}`, "info");
+        }
+        
+        function generateReferralCode() {
+            if (!u) return '';
+            return u.username.toUpperCase() + Math.random().toString(36).substr(2, 4).toUpperCase();
+        }
+        
+        function copyReferralCode() {
+            const code = document.getElementById('referral-code-display').value;
+            navigator.clipboard.writeText(code).then(() => {
+                showRealtimeNotification("Скопировано!", "Реферальный код скопирован в буфер обмена", "success");
+            }).catch(() => {
+                showRealtimeNotification("Ошибка", "Не удалось скопировать код", "error");
+            });
+        }
+        
+        async function exportStats() {
+            const statsData = {
+                username: u.username,
+                balance: u.balance,
+                xp: u.xp,
+                level: Math.floor(u.xp / 1000) + 1,
+                stats: userStats,
+                achievements: achievementsData,
+                vip: isVIP,
+                referralCode: referralCode,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(statsData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `blackwin_stats_${u.username}_${Date.now()}.json`;
+            link.click();
+            
+            showRealtimeNotification("Экспорт завершен!", "Статистика сохранена в JSON", "success");
+        }
+        
+        let wheelLastSpin = 0;
+        const WHEEL_COOLDOWN = 24 * 60 * 60 * 1000; // 24 часа
+        
+        async function spinWheelOfFortune() {
+            const now = Date.now();
+            const timeSinceLastSpin = now - wheelLastSpin;
+            
+            if (timeSinceLastSpin < WHEEL_COOLDOWN) {
+                const timeLeft = WHEEL_COOLDOWN - timeSinceLastSpin;
+                const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+                showRealtimeNotification("Недоступно", `Следующее вращение через ${hours}ч`, "error");
+                return;
+            }
+            
+            wheelLastSpin = now;
+            localStorage.setItem('wheel_last_spin_' + u.username, now);
+            
+            // Призы колеса фортуны
+            const prizes = [
+                { name: '100 BC', amount: 100, chance: 30 },
+                { name: '500 BC', amount: 500, chance: 25 },
+                { name: '1,000 BC', amount: 1000, chance: 20 },
+                { name: '5,000 BC', amount: 5000, chance: 15 },
+                { name: '10,000 BC', amount: 10000, chance: 7 },
+                { name: '50,000 BC', amount: 50000, chance: 2 },
+                { name: '100,000 BC', amount: 100000, chance: 1 }
+            ];
+            
+            const random = Math.random() * 100;
+            let cumulative = 0;
+            let prize = prizes[0];
+            
+            for (const p of prizes) {
+                cumulative += p.chance;
+                if (random <= cumulative) {
+                    prize = p;
+                    break;
+                }
+            }
+            
+            await updateData(prize.amount, 50);
+            showRealtimeNotification("КОЛЕСО ФОРТУНЫ!", `Вы выиграли: ${prize.name}!`, "success");
+            updateWheelTimer();
+        }
+        
+        function updateWheelTimer() {
+            const now = Date.now();
+            const timeSinceLastSpin = now - wheelLastSpin;
+            const timeLeft = WHEEL_COOLDOWN - timeSinceLastSpin;
+            
+            if (timeLeft <= 0) {
+                document.getElementById('wheel-timer').textContent = 'ДОСТУПНО!';
+                document.getElementById('spin-wheel-btn').disabled = false;
+                document.getElementById('spin-wheel-btn').classList.remove('opacity-50');
+            } else {
+                const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+                const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                const seconds = Math.floor((timeLeft % (60 * 1000)) / 1000);
+                document.getElementById('wheel-timer').textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                document.getElementById('spin-wheel-btn').disabled = true;
+                document.getElementById('spin-wheel-btn').classList.add('opacity-50');
+                setTimeout(updateWheelTimer, 1000);
+            }
+        }
+        
+        async function loadVIPStatus() {
+            const { data } = await sb.from('profiles').select('vip_until').eq('username', u.username).single();
+            if (data && data.vip_until) {
+                const vipDate = new Date(data.vip_until);
+                if (vipDate > new Date()) {
+                    isVIP = true;
+                    vipUntil = vipDate;
+                    document.getElementById('vip-status-card').style.display = 'block';
+                    document.getElementById('vip-until-text').textContent = 'До: ' + vipDate.toLocaleDateString();
+                }
+            }
+        }
+        
+        function initializeSettings() {
+            // Загрузить сохраненные настройки
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const savedSound = localStorage.getItem('sound') === 'true' || localStorage.getItem('sound') === null;
+            const savedNotif = localStorage.getItem('notifications') === 'true' || localStorage.getItem('notifications') === null;
+            
+            setTheme(savedTheme);
+            toggleSound(savedSound);
+            toggleNotifications(savedNotif);
+            
+            // Установить реферальный код
+            referralCode = generateReferralCode();
+            document.getElementById('referral-code-display').value = referralCode;
+            
+            // Загрузить время последнего вращения колеса
+            wheelLastSpin = parseInt(localStorage.getItem('wheel_last_spin_' + u.username) || '0');
+            updateWheelTimer();
+            
+            // Загрузить VIP статус
+            loadVIPStatus();
         }
 
         async function loadBetHistory() {
@@ -1406,6 +2014,651 @@
             }
         }
 
+        // === СЛОТЫ ===
+        let slotsSymbols = ['🍒', '🍋', '🍊', '🍉', '💎', '7️⃣', '⭐'];
+        
+        function openSlotsModal() {
+            document.getElementById('slots-modal').classList.remove('hidden');
+            document.getElementById('slot-1').innerText = '🍒';
+            document.getElementById('slot-2').innerText = '🍒';
+            document.getElementById('slot-3').innerText = '🍒';
+        }
+        
+        function closeSlotsModal() {
+            document.getElementById('slots-modal').classList.add('hidden');
+        }
+        
+        function setQuickBetSlots(amount) {
+            const input = document.getElementById('slots-bet-amount');
+            if (typeof amount === 'number') {
+                input.value = amount;
+            } else if (amount === 'half') {
+                input.value = Math.floor(u.balance / 2);
+            } else if (amount === 'max') {
+                input.value = Math.floor(u.balance * 0.8);
+            } else if (amount === 'all') {
+                input.value = u.balance;
+            } else if (amount === 'clear') {
+                input.value = '';
+            }
+        }
+        
+        async function playSlots() {
+            const betInput = document.getElementById('slots-bet-amount');
+            const betAmount = parseInt(betInput.value);
+            
+            if (!betAmount || betAmount <= 0 || betAmount < 100) {
+                showRealtimeNotification("Ошибка", "Минимальная ставка: 100 BC!", "error");
+                return;
+            }
+            
+            if (betAmount > u.balance) {
+                showRealtimeNotification("Ошибка", "Недостаточно BC!", "error");
+                return;
+            }
+            
+            // Анимация вращения
+            let spins = 15;
+            const spinInterval = setInterval(() => {
+                document.getElementById('slot-1').innerText = slotsSymbols[Math.floor(Math.random() * slotsSymbols.length)];
+                document.getElementById('slot-2').innerText = slotsSymbols[Math.floor(Math.random() * slotsSymbols.length)];
+                document.getElementById('slot-3').innerText = slotsSymbols[Math.floor(Math.random() * slotsSymbols.length)];
+                spins--;
+                if (spins <= 0) {
+                    clearInterval(spinInterval);
+                    finishSlots(betAmount);
+                }
+            }, 100);
+        }
+        
+        async function finishSlots(betAmount) {
+            const s1 = slotsSymbols[Math.floor(Math.random() * slotsSymbols.length)];
+            const s2 = slotsSymbols[Math.floor(Math.random() * slotsSymbols.length)];
+            const s3 = slotsSymbols[Math.floor(Math.random() * slotsSymbols.length)];
+            
+            document.getElementById('slot-1').innerText = s1;
+            document.getElementById('slot-2').innerText = s2;
+            document.getElementById('slot-3').innerText = s3;
+            
+            let multiplier = 0;
+            if (s1 === s2 && s2 === s3) {
+                if (s1 === '7️⃣') multiplier = 50;
+                else if (s1 === '💎') multiplier = 25;
+                else if (s1 === '⭐') multiplier = 15;
+                else multiplier = 10;
+            } else if (s1 === s2 || s2 === s3 || s1 === s3) {
+                multiplier = 2;
+            }
+            
+            if (multiplier > 0) {
+                const winAmount = betAmount * multiplier;
+                await updateData(winAmount - betAmount, 100);
+                showRealtimeNotification("ВЫИГРЫШ!", `x${multiplier}! +${winAmount.toLocaleString()} BC!`, "success");
+                updateUserStats('win', winAmount - betAmount);
+            } else {
+                await updateData(-betAmount, 20);
+                showRealtimeNotification("Попробуйте еще!", `-${betAmount} BC`, "info");
+                updateUserStats('loss', betAmount);
+            }
+        }
+
+        // === БЛЭКДЖЕК ===
+        let bjDeck = [];
+        let bjPlayerHand = [];
+        let bjDealerHand = [];
+        let bjBetAmount = 0;
+        
+        function openBlackjackModal() {
+            document.getElementById('blackjack-modal').classList.remove('hidden');
+        }
+        
+        function closeBlackjackModal() {
+            document.getElementById('blackjack-modal').classList.add('hidden');
+        }
+        
+        function setQuickBetBlackjack(amount) {
+            document.getElementById('blackjack-bet-amount').value = amount;
+        }
+        
+        function createDeck() {
+            const suits = ['♠', '♥', '♦', '♣'];
+            const values = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+            const deck = [];
+            for (let suit of suits) {
+                for (let value of values) {
+                    deck.push({suit, value});
+                }
+            }
+            return deck.sort(() => Math.random() - 0.5);
+        }
+        
+        function getCardValue(card) {
+            if (card.value === 'A') return 11;
+            if (['K','Q','J'].includes(card.value)) return 10;
+            return parseInt(card.value);
+        }
+        
+        function getHandValue(hand) {
+            let value = 0;
+            let aces = 0;
+            for (let card of hand) {
+                value += getCardValue(card);
+                if (card.value === 'A') aces++;
+            }
+            while (value > 21 && aces > 0) {
+                value -= 10;
+                aces--;
+            }
+            return value;
+        }
+        
+        function startBlackjack() {
+            const bet = parseInt(document.getElementById('blackjack-bet-amount').value);
+            if (!bet || bet < 100 || bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Некорректная ставка!", "error");
+                return;
+            }
+            
+            bjBetAmount = bet;
+            bjDeck = createDeck();
+            bjPlayerHand = [bjDeck.pop(), bjDeck.pop()];
+            bjDealerHand = [bjDeck.pop(), bjDeck.pop()];
+            
+            document.getElementById('blackjack-bet-phase').classList.add('hidden');
+            document.getElementById('blackjack-play-phase').classList.remove('hidden');
+            
+            updateBlackjackDisplay(true);
+        }
+        
+        function updateBlackjackDisplay(hideDealer = false) {
+            const playerCards = document.getElementById('player-cards');
+            const dealerCards = document.getElementById('dealer-cards');
+            
+            playerCards.innerHTML = bjPlayerHand.map(c => 
+                `<div class="w-12 h-16 bg-blue-600/20 rounded border border-blue-600 flex items-center justify-center text-sm">${c.value}${c.suit}</div>`
+            ).join('');
+            
+            if (hideDealer) {
+                dealerCards.innerHTML = `
+                    <div class="w-12 h-16 bg-red-600/20 rounded border border-red-600 flex items-center justify-center text-sm">${bjDealerHand[0].value}${bjDealerHand[0].suit}</div>
+                    <div class="w-12 h-16 bg-red-600/20 rounded border border-red-600 flex items-center justify-center">?</div>
+                `;
+                document.getElementById('dealer-score').innerText = 'Счет: ?';
+            } else {
+                dealerCards.innerHTML = bjDealerHand.map(c => 
+                    `<div class="w-12 h-16 bg-red-600/20 rounded border border-red-600 flex items-center justify-center text-sm">${c.value}${c.suit}</div>`
+                ).join('');
+                document.getElementById('dealer-score').innerText = `Счет: ${getHandValue(bjDealerHand)}`;
+            }
+            
+            document.getElementById('player-score').innerText = `Счет: ${getHandValue(bjPlayerHand)}`;
+        }
+        
+        function blackjackHit() {
+            bjPlayerHand.push(bjDeck.pop());
+            updateBlackjackDisplay(true);
+            
+            if (getHandValue(bjPlayerHand) > 21) {
+                endBlackjack('bust');
+            }
+        }
+        
+        function blackjackStand() {
+            while (getHandValue(bjDealerHand) < 17) {
+                bjDealerHand.push(bjDeck.pop());
+            }
+            updateBlackjackDisplay(false);
+            
+            const playerValue = getHandValue(bjPlayerHand);
+            const dealerValue = getHandValue(bjDealerHand);
+            
+            if (dealerValue > 21 || playerValue > dealerValue) {
+                endBlackjack('win');
+            } else if (playerValue === dealerValue) {
+                endBlackjack('push');
+            } else {
+                endBlackjack('loss');
+            }
+        }
+        
+        async function endBlackjack(result) {
+            document.getElementById('blackjack-play-phase').classList.add('hidden');
+            document.getElementById('blackjack-bet-phase').classList.remove('hidden');
+            
+            if (result === 'win') {
+                await updateData(bjBetAmount, 100);
+                showRealtimeNotification("ПОБЕДА!", `+${bjBetAmount.toLocaleString()} BC!`, "success");
+                updateUserStats('win', bjBetAmount);
+            } else if (result === 'bust' || result === 'loss') {
+                await updateData(-bjBetAmount, 20);
+                showRealtimeNotification("ПРОИГРЫШ", `-${bjBetAmount} BC`, "error");
+                updateUserStats('loss', bjBetAmount);
+            } else {
+                showRealtimeNotification("НИЧЬЯ", "Ставка возвращена", "info");
+            }
+        }
+
+        // === МИНЫ ===
+        let minesGrid = [];
+        let minesBet = 0;
+        let minesRevealed = 0;
+        let minesMultiplier = 1.0;
+        let minesActive = false;
+        
+        function openMinesModal() {
+            document.getElementById('mines-modal').classList.remove('hidden');
+        }
+        
+        function closeMinesModal() {
+            document.getElementById('mines-modal').classList.add('hidden');
+        }
+        
+        function setQuickBetMines(amount) {
+            document.getElementById('mines-bet-amount').value = amount;
+        }
+        
+        function startMines() {
+            const bet = parseInt(document.getElementById('mines-bet-amount').value);
+            if (!bet || bet < 100 || bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Некорректная ставка!", "error");
+                return;
+            }
+            
+            minesBet = bet;
+            minesRevealed = 0;
+            minesMultiplier = 1.0;
+            minesActive = true;
+            
+            // Создаем поле 5x5 с 5 минами
+            minesGrid = Array(25).fill(false);
+            const minePositions = [];
+            while (minePositions.length < 5) {
+                const pos = Math.floor(Math.random() * 25);
+                if (!minePositions.includes(pos)) minePositions.push(pos);
+            }
+            minePositions.forEach(pos => minesGrid[pos] = true);
+            
+            renderMinesGrid();
+            document.getElementById('mines-bet-phase').classList.add('hidden');
+            document.getElementById('mines-cashout-btn').classList.remove('hidden');
+            updateMinesDisplay();
+        }
+        
+        function renderMinesGrid() {
+            const grid = document.getElementById('mines-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 25; i++) {
+                const cell = document.createElement('button');
+                cell.className = 'w-12 h-12 bg-black/50 border border-yellow-600/30 rounded-lg font-black text-xl';
+                cell.onclick = () => revealMinesCell(i, cell);
+                cell.id = `mine-cell-${i}`;
+                grid.appendChild(cell);
+            }
+        }
+        
+        function revealMinesCell(index, cell) {
+            if (!minesActive || cell.classList.contains('revealed')) return;
+            
+            cell.classList.add('revealed');
+            
+            if (minesGrid[index]) {
+                // Мина!
+                cell.innerText = '💣';
+                cell.classList.add('bg-red-600/50');
+                endMines(false);
+            } else {
+                // Безопасно
+                cell.innerText = '💎';
+                cell.classList.add('bg-green-600/50');
+                minesRevealed++;
+                minesMultiplier = 1 + (minesRevealed * 0.4);
+                updateMinesDisplay();
+            }
+        }
+        
+        function updateMinesDisplay() {
+            document.getElementById('mines-multiplier').innerText = minesMultiplier.toFixed(2) + 'x';
+            document.getElementById('mines-revealed').innerText = minesRevealed;
+        }
+        
+        async function cashoutMines() {
+            if (!minesActive || minesRevealed === 0) return;
+            endMines(true);
+        }
+        
+        async function endMines(cashout) {
+            minesActive = false;
+            document.getElementById('mines-cashout-btn').classList.add('hidden');
+            document.getElementById('mines-bet-phase').classList.remove('hidden');
+            
+            // Показываем все мины
+            for (let i = 0; i < 25; i++) {
+                const cell = document.getElementById(`mine-cell-${i}`);
+                if (minesGrid[i] && !cell.classList.contains('revealed')) {
+                    cell.innerText = '💣';
+                    cell.classList.add('bg-red-600/20');
+                }
+            }
+            
+            if (cashout) {
+                const winAmount = Math.floor(minesBet * minesMultiplier);
+                await updateData(winAmount - minesBet, 100);
+                showRealtimeNotification("ВЫИГРЫШ!", `x${minesMultiplier.toFixed(2)}! +${(winAmount - minesBet).toLocaleString()} BC!`, "success");
+                updateUserStats('win', winAmount - minesBet);
+            } else {
+                await updateData(-minesBet, 20);
+                showRealtimeNotification("ВЗРЫВ!", `-${minesBet} BC`, "error");
+                updateUserStats('loss', minesBet);
+            }
+        }
+
+        // === БАШНЯ ===
+        let towerFloor = 0;
+        let towerBet = 0;
+        let towerMultiplier = 1.0;
+        let towerActive = false;
+        let towerCorrectDoor = 0;
+        
+        function openTowerModal() {
+            document.getElementById('tower-modal').classList.remove('hidden');
+        }
+        
+        function closeTowerModal() {
+            document.getElementById('tower-modal').classList.add('hidden');
+        }
+        
+        function setQuickBetTower(amount) {
+            document.getElementById('tower-bet-amount').value = amount;
+        }
+        
+        function startTower() {
+            const bet = parseInt(document.getElementById('tower-bet-amount').value);
+            if (!bet || bet < 100 || bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Некорректная ставка!", "error");
+                return;
+            }
+            
+            towerBet = bet;
+            towerFloor = 0;
+            towerMultiplier = 1.0;
+            towerActive = true;
+            
+            document.getElementById('tower-bet-phase').classList.add('hidden');
+            document.getElementById('tower-cashout-btn').classList.remove('hidden');
+            
+            nextTowerFloor();
+        }
+        
+        function nextTowerFloor() {
+            towerFloor++;
+            towerCorrectDoor = Math.floor(Math.random() * 3);
+            renderTowerFloor();
+            updateTowerDisplay();
+        }
+        
+        function renderTowerFloor() {
+            const grid = document.getElementById('tower-grid');
+            grid.innerHTML = `
+                <div class="text-center text-sm text-purple-500 mb-2">Этаж ${towerFloor}</div>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="chooseTowerDoor(0)" class="bg-black/50 border border-purple-600/30 rounded-lg py-6 font-black text-2xl">🚪</button>
+                    <button onclick="chooseTowerDoor(1)" class="bg-black/50 border border-purple-600/30 rounded-lg py-6 font-black text-2xl">🚪</button>
+                    <button onclick="chooseTowerDoor(2)" class="bg-black/50 border border-purple-600/30 rounded-lg py-6 font-black text-2xl">🚪</button>
+                </div>
+            `;
+        }
+        
+        function chooseTowerDoor(door) {
+            if (!towerActive) return;
+            
+            if (door === towerCorrectDoor) {
+                // Правильная дверь
+                towerMultiplier *= 1.5;
+                updateTowerDisplay();
+                
+                if (towerFloor >= 10) {
+                    endTower(true);
+                } else {
+                    showRealtimeNotification("Верно!", "Поднимаемся выше!", "success");
+                    nextTowerFloor();
+                }
+            } else {
+                // Неправильная дверь
+                endTower(false);
+            }
+        }
+        
+        function updateTowerDisplay() {
+            document.getElementById('tower-floor').innerText = towerFloor;
+            document.getElementById('tower-multiplier').innerText = towerMultiplier.toFixed(2) + 'x';
+        }
+        
+        async function cashoutTower() {
+            if (!towerActive || towerFloor === 0) return;
+            endTower(true);
+        }
+        
+        async function endTower(win) {
+            towerActive = false;
+            document.getElementById('tower-cashout-btn').classList.add('hidden');
+            document.getElementById('tower-bet-phase').classList.remove('hidden');
+            document.getElementById('tower-grid').innerHTML = '';
+            
+            if (win) {
+                const winAmount = Math.floor(towerBet * towerMultiplier);
+                await updateData(winAmount - towerBet, 150);
+                showRealtimeNotification("ПОБЕДА!", `Этаж ${towerFloor}! x${towerMultiplier.toFixed(2)}! +${(winAmount - towerBet).toLocaleString()} BC!`, "success");
+                updateUserStats('win', winAmount - towerBet);
+            } else {
+                await updateData(-towerBet, 20);
+                showRealtimeNotification("ПАДЕНИЕ!", `Этаж ${towerFloor}. -${towerBet} BC`, "error");
+                updateUserStats('loss', towerBet);
+            }
+        }
+
+        // === PLINKO ===
+        function openPlinkoModal() {
+            document.getElementById('plinko-modal').classList.remove('hidden');
+        }
+        
+        function closePlinkoModal() {
+            document.getElementById('plinko-modal').classList.add('hidden');
+        }
+        
+        function setQuickBetPlinko(amount) {
+            document.getElementById('plinko-bet-amount').value = amount;
+        }
+        
+        async function playPlinko() {
+            const bet = parseInt(document.getElementById('plinko-bet-amount').value);
+            if (!bet || bet < 100 || bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Некорректная ставка!", "error");
+                return;
+            }
+            
+            // Симуляция падения шара
+            const multipliers = [50, 10, 5, 2, 1, 2, 5, 10, 50];
+            const weights = [1, 3, 10, 20, 32, 20, 10, 3, 1]; // Вероятности
+            
+            const totalWeight = weights.reduce((a, b) => a + b, 0);
+            let random = Math.random() * totalWeight;
+            let index = 0;
+            
+            for (let i = 0; i < weights.length; i++) {
+                random -= weights[i];
+                if (random <= 0) {
+                    index = i;
+                    break;
+                }
+            }
+            
+            const multiplier = multipliers[index];
+            const winAmount = bet * multiplier;
+            
+            await updateData(winAmount - bet, 80);
+            
+            if (multiplier >= 10) {
+                showRealtimeNotification("ДЖЕКПОТ!", `x${multiplier}! +${(winAmount - bet).toLocaleString()} BC!`, "success");
+                updateUserStats('win', winAmount - bet);
+            } else if (multiplier > 1) {
+                showRealtimeNotification("Выигрыш!", `x${multiplier}! +${(winAmount - bet).toLocaleString()} BC!`, "success");
+                updateUserStats('win', winAmount - bet);
+            } else {
+                showRealtimeNotification("Ничья", "Ставка возвращена", "info");
+            }
+        }
+
+        // === ДЖЕКПОТ ===
+        let jackpotPool = 0;
+        let jackpotParticipants = [];
+        
+        function openJackpotModal() {
+            document.getElementById('jackpot-modal').classList.remove('hidden');
+            loadJackpotData();
+        }
+        
+        function closeJackpotModal() {
+            document.getElementById('jackpot-modal').classList.add('hidden');
+        }
+        
+        function setQuickBetJackpot(amount) {
+            document.getElementById('jackpot-bet-amount').value = amount;
+        }
+        
+        async function loadJackpotData() {
+            const { data } = await sb.from('jackpot_pool').select('*').limit(1).single();
+            if (data) {
+                jackpotPool = data.amount || 0;
+                document.getElementById('jackpot-pool').innerText = jackpotPool.toLocaleString() + ' BC';
+            }
+            
+            const { data: participants } = await sb.from('jackpot_participants').select('*');
+            jackpotParticipants = participants || [];
+            renderJackpotParticipants();
+        }
+        
+        function renderJackpotParticipants() {
+            const container = document.getElementById('jackpot-participants');
+            if (!jackpotParticipants || jackpotParticipants.length === 0) {
+                container.innerHTML = '<p class="text-xs text-gray-500">Пока никого...</p>';
+                return;
+            }
+            
+            container.innerHTML = jackpotParticipants.map(p => 
+                `<div class="flex justify-between text-xs">
+                    <span>${p.username}</span>
+                    <span class="text-yellow-500">${p.bet.toLocaleString()} BC</span>
+                </div>`
+            ).join('');
+        }
+        
+        async function joinJackpot() {
+            const bet = parseInt(document.getElementById('jackpot-bet-amount').value);
+            if (!bet || bet < 1000 || bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Минимальная ставка: 1000 BC!", "error");
+                return;
+            }
+            
+            await updateData(-bet, 50);
+            
+            await sb.from('jackpot_participants').insert([{
+                username: u.username,
+                bet: bet
+            }]);
+            
+            const newPool = jackpotPool + bet;
+            await sb.from('jackpot_pool').upsert([{ id: 1, amount: newPool }]);
+            
+            showRealtimeNotification("Участие принято!", "Удачи в розыгрыше!", "success");
+            loadJackpotData();
+            updateQuestProgress('jackpot_join', 1);
+        }
+
+        // === ДУЭЛЬ ===
+        function openDuelModal() {
+            document.getElementById('duel-modal').classList.remove('hidden');
+            loadActiveDuels();
+        }
+        
+        function closeDuelModal() {
+            document.getElementById('duel-modal').classList.add('hidden');
+        }
+        
+        function setQuickBetDuel(amount) {
+            document.getElementById('duel-bet-amount').value = amount;
+        }
+        
+        async function loadActiveDuels() {
+            const { data } = await sb.from('duels').select('*').eq('status', 'pending');
+            const container = document.getElementById('active-duels');
+            
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p class="text-xs text-gray-500">Нет активных дуэлей</p>';
+                return;
+            }
+            
+            container.innerHTML = data.map(d => 
+                `<div class="bg-black/50 p-3 rounded-lg">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-black">${d.creator}</span>
+                        <span class="text-xs text-yellow-500">${d.bet.toLocaleString()} BC</span>
+                    </div>
+                    ${d.creator !== u.username ? `<button onclick="acceptDuel(${d.id})" class="yellow-btn w-full py-2 rounded-lg text-xs mt-2">ПРИНЯТЬ</button>` : ''}
+                </div>`
+            ).join('');
+        }
+        
+        async function createDuel() {
+            const opponent = document.getElementById('duel-opponent').value.trim();
+            const bet = parseInt(document.getElementById('duel-bet-amount').value);
+            
+            if (!opponent || !bet || bet < 100 || bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Заполните все поля!", "error");
+                return;
+            }
+            
+            await updateData(-bet, 0);
+            
+            await sb.from('duels').insert([{
+                creator: u.username,
+                opponent: opponent,
+                bet: bet,
+                status: 'pending'
+            }]);
+            
+            showRealtimeNotification("Дуэль создана!", "Ожидайте принятия...", "success");
+            loadActiveDuels();
+        }
+        
+        async function acceptDuel(duelId) {
+            const { data: duel } = await sb.from('duels').select('*').eq('id', duelId).single();
+            
+            if (!duel || duel.bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Недостаточно BC!", "error");
+                return;
+            }
+            
+            await updateData(-duel.bet, 0);
+            
+            // Розыгрыш дуэли
+            const winner = Math.random() < 0.5 ? duel.creator : u.username;
+            const winAmount = duel.bet * 2;
+            
+            await sb.from('duels').update({ status: 'completed', winner: winner }).eq('id', duelId);
+            
+            if (winner === u.username) {
+                await updateData(winAmount, 200);
+                showRealtimeNotification("ПОБЕДА В ДУЭЛИ!", `+${winAmount.toLocaleString()} BC!`, "success");
+                updateUserStats('win', duel.bet);
+            } else {
+                showRealtimeNotification("Поражение", `Победил ${winner}`, "error");
+                updateUserStats('loss', duel.bet);
+            }
+            
+            loadActiveDuels();
+            updateQuestProgress('duel_play', 1);
+        }
+
         // Функции для истории игр
         function loadGameHistory(game) {
             const container = document.getElementById(`${game}-history`);
@@ -1732,6 +2985,164 @@
                             max_win_streak: 0
                         }).eq('username', targetNick);
                         showRealtimeNotification("Успех", `Статистика ${targetNick} сброшена`, "success");
+                        break;
+
+                    // Новые админ-команды
+                    case '/mute':
+                        const muteMinutes = parseInt(value);
+                        if (!targetNick || !muteMinutes) throw "Формат: /mute (ник) (минуты)";
+                        const muteUntil = new Date();
+                        muteUntil.setMinutes(muteUntil.getMinutes() + muteMinutes);
+                        await sb.from('profiles').update({ 
+                            is_muted: true,
+                            mute_until: muteUntil.toISOString() 
+                        }).eq('username', targetNick);
+                        showRealtimeNotification("Успех", `Игрок ${targetNick} заглушен на ${muteMinutes} минут`, "success");
+                        break;
+
+                    case '/unmute':
+                        if (!targetNick) throw "Формат: /unmute (ник)";
+                        await sb.from('profiles').update({ 
+                            is_muted: false,
+                            mute_until: null 
+                        }).eq('username', targetNick);
+                        showRealtimeNotification("Успех", `Игрок ${targetNick} разглушен`, "success");
+                        break;
+
+                    case '/kick':
+                        if (!targetNick) throw "Формат: /kick (ник)";
+                        await sb.from('online_status').update({ 
+                            is_online: false 
+                        }).eq('username', targetNick);
+                        await sb.from('global_alerts').insert([{ 
+                            sender: 'АДМИНИСТРАТОР', 
+                            message: `Игрок ${targetNick} был кикнут администратором` 
+                        }]);
+                        showRealtimeNotification("Успех", `Игрок ${targetNick} кикнут`, "success");
+                        break;
+
+                    case '/warn':
+                        const warnReason = parts.slice(2).join(' ') || "Нарушение правил";
+                        if (!targetNick) throw "Формат: /warn (ник) (причина)";
+                        const { data: profile } = await sb.from('profiles').select('warnings').eq('username', targetNick).single();
+                        const warnings = (profile?.warnings || 0) + 1;
+                        await sb.from('profiles').update({ warnings: warnings }).eq('username', targetNick);
+                        await sb.from('messages').insert([{
+                            sender: 'СИСТЕМА',
+                            receiver: targetNick,
+                            text: `⚠️ Предупреждение #${warnings}: ${warnReason}`
+                        }]);
+                        showRealtimeNotification("Успех", `Предупреждение #${warnings} выдано ${targetNick}`, "success");
+                        break;
+
+                    case '/clearwarns':
+                        if (!targetNick) throw "Формат: /clearwarns (ник)";
+                        await sb.from('profiles').update({ warnings: 0 }).eq('username', targetNick);
+                        showRealtimeNotification("Успех", `Предупреждения ${targetNick} очищены`, "success");
+                        break;
+
+                    case '/setlevel':
+                        const newLevel = parseInt(value);
+                        if (!targetNick || !newLevel || newLevel < 1 || newLevel > 100) throw "Формат: /setlevel (ник) (1-100)";
+                        const newXP = (newLevel - 1) * 1000;
+                        await sb.from('profiles').update({ xp: newXP }).eq('username', targetNick);
+                        showRealtimeNotification("Успех", `Уровень ${targetNick} установлен на ${newLevel}`, "success");
+                        break;
+
+                    case '/giveclan':
+                        const clanName = parts.slice(2).join(' ');
+                        if (!targetNick || !clanName) throw "Формат: /giveclan (ник) (название клана)";
+                        await sb.from('profiles').update({ clan: clanName }).eq('username', targetNick);
+                        showRealtimeNotification("Успех", `${targetNick} добавлен в клан ${clanName}`, "success");
+                        break;
+
+                    case '/createclan':
+                        const newClanName = parts.slice(1).join(' ');
+                        if (!newClanName) throw "Формат: /createclan (название)";
+                        await sb.from('clans').insert([{
+                            name: newClanName,
+                            created_by: u.username,
+                            created_at: new Date().toISOString()
+                        }]);
+                        showRealtimeNotification("Успех", `Клан ${newClanName} создан`, "success");
+                        break;
+
+                    case '/deleteclan':
+                        const deleteClanName = parts.slice(1).join(' ');
+                        if (!deleteClanName) throw "Формат: /deleteclan (название)";
+                        await sb.from('clans').delete().eq('name', deleteClanName);
+                        await sb.from('profiles').update({ clan: null }).eq('clan', deleteClanName);
+                        showRealtimeNotification("Успех", `Клан ${deleteClanName} удален`, "success");
+                        break;
+
+                    case '/jackpot':
+                        const jackpotAmount = parseInt(parts[1]);
+                        if (!jackpotAmount) throw "Формат: /jackpot (сумма)";
+                        await sb.from('jackpot_pool').upsert([{ id: 1, amount: jackpotAmount }]);
+                        showRealtimeNotification("Успех", `Джекпот установлен на ${jackpotAmount.toLocaleString()} BC`, "success");
+                        updateJackpotDisplay();
+                        break;
+
+                    case '/maintenance':
+                        const maintenanceMode = parts[1];
+                        if (!maintenanceMode || !['on', 'off'].includes(maintenanceMode)) throw "Формат: /maintenance (on/off)";
+                        const isOn = maintenanceMode === 'on';
+                        await sb.from('system_settings').upsert([{ id: 1, maintenance_mode: isOn }]);
+                        showRealtimeNotification("Успех", `Режим обслуживания ${isOn ? 'включен' : 'выключен'}`, "success");
+                        break;
+
+                    case '/announce':
+                        const announcement = parts.slice(1).join(' ');
+                        if (!announcement) throw "Формат: /announce (текст)";
+                        await sb.from('global_alerts').insert([{ 
+                            sender: 'ВАЖНОЕ ОБЪЯВЛЕНИЕ', 
+                            message: announcement,
+                            is_important: true
+                        }]);
+                        showRealtimeNotification("Успех", "Объявление отправлено всем", "success");
+                        break;
+
+                    case '/setrate':
+                        const gameName = parts[1];
+                        const newRate = parseFloat(parts[2]);
+                        if (!gameName || !newRate) throw "Формат: /setrate (игра) (шанс 0-1)";
+                        if (newRate < 0 || newRate > 1) throw "Шанс должен быть от 0 до 1";
+                        await sb.from('game_rates').upsert([{ 
+                            game: gameName,
+                            win_rate: newRate 
+                        }]);
+                        showRealtimeNotification("Успех", `Шанс ${gameName} установлен на ${(newRate * 100).toFixed(1)}%`, "success");
+                        break;
+
+                    case '/logs':
+                        if (!targetNick) throw "Формат: /logs (ник)";
+                        const { data: logs } = await sb.from('user_logs')
+                            .select('*')
+                            .eq('username', targetNick)
+                            .order('created_at', { ascending: false })
+                            .limit(10);
+                        console.log('Логи пользователя', targetNick, logs);
+                        showRealtimeNotification("Логи", `Проверьте консоль для ${targetNick}`, "info");
+                        break;
+
+                    case '/refund':
+                        const refundAmount = parseInt(value);
+                        if (!targetNick || !refundAmount || isNaN(refundAmount)) throw "Формат: /refund (ник) (сумма)";
+                        
+                        // Получаем текущий баланс и обновляем безопасно
+                        const { data: targetProfile } = await sb.from('profiles').select('balance').eq('username', targetNick).single();
+                        if (!targetProfile) throw "Игрок не найден";
+                        
+                        await sb.from('profiles').update({
+                            balance: targetProfile.balance + refundAmount
+                        }).eq('username', targetNick);
+                        
+                        await sb.from('messages').insert([{
+                            sender: 'СИСТЕМА',
+                            receiver: targetNick,
+                            text: `Вам возвращено ${refundAmount.toLocaleString()} BC администратором`
+                        }]);
+                        showRealtimeNotification("Успех", `Возврат ${refundAmount.toLocaleString()} BC для ${targetNick}`, "success");
                         break;
 
                     default:
@@ -3062,7 +4473,23 @@
                 return;
             }
             
-            const isWin = Math.random() < c.winRate;
+            // Инициализация pity счетчика для этого кейса из localStorage
+            const pityKey = `pity_${id}_${u.username}`;
+            if (!pityCounter[id]) {
+                pityCounter[id] = parseInt(localStorage.getItem(pityKey)) || 0;
+            }
+            
+            // Проверка pity системы - гарантированный выигрыш
+            let isWin;
+            let isPityWin = false;
+            if (pityCounter[id] >= PITY_THRESHOLD) {
+                isWin = true;
+                isPityWin = true;
+                pityCounter[id] = 0;
+            } else {
+                isWin = Math.random() < c.winRate;
+            }
+            
             let winB = 0;
             let winXP = 0;
             
@@ -3073,10 +4500,15 @@
                 } else {
                     winXP = 300;
                 }
+                pityCounter[id] = 0; // Сброс счетчика при выигрыше
             } else {
                 winB = Math.floor(Math.random() * (c.price * 0.6));
                 winXP = 100;
+                pityCounter[id]++; // Увеличение счетчика при проигрыше
             }
+            
+            // Сохраняем pity счетчик в localStorage
+            localStorage.setItem(pityKey, pityCounter[id]);
             
             if (isUsingKey) {
                 localStorage.setItem(keyType + '_key_' + u.username, 'false');
@@ -3089,10 +4521,12 @@
             checkAchievementProgress('cases', await getCasesOpenedCount());
             
             if (isWin) {
-                showRealtimeNotification("КЕЙС ОТКРЫТ!", `Вы получили: ${winB.toLocaleString()} BC и ${winXP} XP! ОКУП!`, "success");
+                const pityMsg = isPityWin ? ' [ГАРАНТИЯ]' : '';
+                showRealtimeNotification("КЕЙС ОТКРЫТ!", `Вы получили: ${winB.toLocaleString()} BC и ${winXP} XP! ОКУП!${pityMsg}`, "success");
                 updateUserStats('win', winB);
             } else {
-                showRealtimeNotification("КЕЙС ОТКРЫТ", `Вы получили: ${winB.toLocaleString()} BC и ${winXP} XP`, "info");
+                const pityInfo = pityCounter[id] > 0 ? ` (${pityCounter[id]}/${PITY_THRESHOLD} до гарантии)` : '';
+                showRealtimeNotification("КЕЙС ОТКРЫТ", `Вы получили: ${winB.toLocaleString()} BC и ${winXP} XP${pityInfo}`, "info");
                 if (winB - finalPrice < 0) {
                     updateUserStats('loss', finalPrice - winB);
                 }
