@@ -417,6 +417,229 @@
         </div>
     </div>
 
+    <!-- Модальное окно Слотов -->
+    <div id="slots-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closeSlotsModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-red-600 mb-6 italic">СЛОТЫ 🎰</h2>
+            <p class="text-center text-gray-400 text-sm mb-6">Совпадите 3 символа! До x50</p>
+            
+            <div class="flex justify-center gap-2 mb-6">
+                <div class="bg-black/50 p-6 rounded-xl border-2 border-red-600/30">
+                    <span id="slot-1" class="text-5xl">🍒</span>
+                </div>
+                <div class="bg-black/50 p-6 rounded-xl border-2 border-red-600/30">
+                    <span id="slot-2" class="text-5xl">🍒</span>
+                </div>
+                <div class="bg-black/50 p-6 rounded-xl border-2 border-red-600/30">
+                    <span id="slot-3" class="text-5xl">🍒</span>
+                </div>
+            </div>
+            
+            <input type="number" id="slots-bet-amount" placeholder="СУММА СТАВКИ" class="bet-input" min="1">
+            
+            <div class="grid grid-cols-4 gap-2 mb-6">
+                <button onclick="setQuickBetSlots(100)" class="quick-bet-btn">100</button>
+                <button onclick="setQuickBetSlots(500)" class="quick-bet-btn">500</button>
+                <button onclick="setQuickBetSlots(1000)" class="quick-bet-btn">1K</button>
+                <button onclick="setQuickBetSlots(5000)" class="quick-bet-btn">5K</button>
+                <button onclick="setQuickBetSlots('half')" class="quick-bet-btn text-red-600">1/2</button>
+                <button onclick="setQuickBetSlots('max')" class="quick-bet-btn text-red-600">MAX</button>
+                <button onclick="setQuickBetSlots('all')" class="quick-bet-btn text-red-600">ВСЁ</button>
+                <button onclick="setQuickBetSlots('clear')" class="quick-bet-btn text-gray-500">СБРОС</button>
+            </div>
+            
+            <button onclick="playSlots()" class="red-btn w-full py-4 rounded-2xl font-black">КРУТИТЬ</button>
+            <div id="slots-history" class="mt-4 space-y-2 max-h-32 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Блэкджека -->
+    <div id="blackjack-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closeBlackjackModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-blue-600 mb-6 italic">БЛЭКДЖЕК 🃏</h2>
+            
+            <div class="space-y-4 mb-6">
+                <div class="bg-black/50 p-4 rounded-xl">
+                    <p class="text-xs text-gray-500 mb-2">Дилер:</p>
+                    <div id="dealer-cards" class="flex gap-2 mb-2">
+                        <div class="w-12 h-16 bg-red-600/20 rounded border border-red-600/50 flex items-center justify-center">?</div>
+                    </div>
+                    <p id="dealer-score" class="text-sm font-black text-red-600">Счет: ?</p>
+                </div>
+                
+                <div class="bg-black/50 p-4 rounded-xl">
+                    <p class="text-xs text-gray-500 mb-2">Вы:</p>
+                    <div id="player-cards" class="flex gap-2 mb-2">
+                        <div class="w-12 h-16 bg-blue-600/20 rounded border border-blue-600/50 flex items-center justify-center">?</div>
+                    </div>
+                    <p id="player-score" class="text-sm font-black text-blue-600">Счет: ?</p>
+                </div>
+            </div>
+            
+            <div id="blackjack-bet-phase">
+                <input type="number" id="blackjack-bet-amount" placeholder="СУММА СТАВКИ" class="bet-input" min="1">
+                <div class="grid grid-cols-4 gap-2 mb-6">
+                    <button onclick="setQuickBetBlackjack(100)" class="quick-bet-btn">100</button>
+                    <button onclick="setQuickBetBlackjack(500)" class="quick-bet-btn">500</button>
+                    <button onclick="setQuickBetBlackjack(1000)" class="quick-bet-btn">1K</button>
+                    <button onclick="setQuickBetBlackjack(5000)" class="quick-bet-btn">5K</button>
+                </div>
+                <button onclick="startBlackjack()" class="red-btn w-full py-4 rounded-2xl font-black">НАЧАТЬ</button>
+            </div>
+            
+            <div id="blackjack-play-phase" class="hidden space-y-3">
+                <div class="flex gap-3">
+                    <button onclick="blackjackHit()" class="flex-1 blue-btn py-4 rounded-2xl font-black">ЕЩЁ</button>
+                    <button onclick="blackjackStand()" class="flex-1 red-btn py-4 rounded-2xl font-black">ХВАТИТ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно Мин -->
+    <div id="mines-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closeMinesModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-yellow-600 mb-4 italic">МИНЫ 💣</h2>
+            <p class="text-center text-xs mb-2">Множитель: <span id="mines-multiplier" class="text-yellow-500 font-black">1.00x</span></p>
+            <p class="text-center text-xs mb-4">Открыто: <span id="mines-revealed" class="text-green-500">0</span>/25</p>
+            
+            <div id="mines-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
+            
+            <div id="mines-bet-phase">
+                <input type="number" id="mines-bet-amount" placeholder="СУММА СТАВКИ" class="bet-input mb-4" min="1">
+                <div class="grid grid-cols-4 gap-2 mb-4">
+                    <button onclick="setQuickBetMines(100)" class="quick-bet-btn">100</button>
+                    <button onclick="setQuickBetMines(500)" class="quick-bet-btn">500</button>
+                    <button onclick="setQuickBetMines(1000)" class="quick-bet-btn">1K</button>
+                    <button onclick="setQuickBetMines(5000)" class="quick-bet-btn">5K</button>
+                </div>
+                <button onclick="startMines()" class="yellow-btn w-full py-4 rounded-2xl font-black">НАЧАТЬ</button>
+            </div>
+            
+            <button id="mines-cashout-btn" onclick="cashoutMines()" class="hidden green-btn w-full py-4 rounded-2xl font-black">ЗАБРАТЬ</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно Башни -->
+    <div id="tower-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closeTowerModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-purple-600 mb-4 italic">БАШНЯ 🏰</h2>
+            <p class="text-center text-xs mb-2">Этаж: <span id="tower-floor" class="text-purple-500 font-black">0</span>/10</p>
+            <p class="text-center text-xs mb-4">Множитель: <span id="tower-multiplier" class="text-yellow-500 font-black">1.00x</span></p>
+            
+            <div id="tower-grid" class="space-y-2 mb-4"></div>
+            
+            <div id="tower-bet-phase">
+                <input type="number" id="tower-bet-amount" placeholder="СУММА СТАВКИ" class="bet-input mb-4" min="1">
+                <div class="grid grid-cols-4 gap-2 mb-4">
+                    <button onclick="setQuickBetTower(100)" class="quick-bet-btn">100</button>
+                    <button onclick="setQuickBetTower(500)" class="quick-bet-btn">500</button>
+                    <button onclick="setQuickBetTower(1000)" class="quick-bet-btn">1K</button>
+                    <button onclick="setQuickBetTower(5000)" class="quick-bet-btn">5K</button>
+                </div>
+                <button onclick="startTower()" class="purple-btn w-full py-4 rounded-2xl font-black">НАЧАТЬ</button>
+            </div>
+            
+            <button id="tower-cashout-btn" onclick="cashoutTower()" class="hidden green-btn w-full py-4 rounded-2xl font-black">ЗАБРАТЬ</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно Plinko -->
+    <div id="plinko-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closePlinkoModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-green-600 mb-6 italic">PLINKO ⚪</h2>
+            <p class="text-center text-gray-400 text-sm mb-6">Бросьте шар и выиграйте!</p>
+            
+            <div id="plinko-board" class="bg-black/50 h-64 rounded-xl border-2 border-green-600/30 mb-4 flex items-end justify-around p-2">
+                <div class="text-center"><span class="text-xs text-red-600 font-black">x50</span></div>
+                <div class="text-center"><span class="text-xs text-orange-500 font-black">x10</span></div>
+                <div class="text-center"><span class="text-xs text-yellow-500 font-black">x5</span></div>
+                <div class="text-center"><span class="text-xs text-green-500 font-black">x2</span></div>
+                <div class="text-center"><span class="text-xs text-blue-500 font-black">x1</span></div>
+                <div class="text-center"><span class="text-xs text-green-500 font-black">x2</span></div>
+                <div class="text-center"><span class="text-xs text-yellow-500 font-black">x5</span></div>
+                <div class="text-center"><span class="text-xs text-orange-500 font-black">x10</span></div>
+                <div class="text-center"><span class="text-xs text-red-600 font-black">x50</span></div>
+            </div>
+            
+            <input type="number" id="plinko-bet-amount" placeholder="СУММА СТАВКИ" class="bet-input" min="1">
+            <div class="grid grid-cols-4 gap-2 mb-6">
+                <button onclick="setQuickBetPlinko(100)" class="quick-bet-btn">100</button>
+                <button onclick="setQuickBetPlinko(500)" class="quick-bet-btn">500</button>
+                <button onclick="setQuickBetPlinko(1000)" class="quick-bet-btn">1K</button>
+                <button onclick="setQuickBetPlinko(5000)" class="quick-bet-btn">5K</button>
+            </div>
+            
+            <button onclick="playPlinko()" class="green-btn w-full py-4 rounded-2xl font-black">БРОСИТЬ ШАР</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно Джекпота -->
+    <div id="jackpot-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closeJackpotModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-red-600 mb-4 italic">ДЖЕКПОТ 💰</h2>
+            
+            <div class="bg-gradient-to-r from-yellow-600 to-red-600 p-6 rounded-2xl mb-6 text-center">
+                <p class="text-xs text-white/70 mb-1">ПРИЗОВОЙ ФОНД</p>
+                <p id="jackpot-pool" class="text-3xl font-black text-white italic">0 BC</p>
+            </div>
+            
+            <div class="bg-black/50 p-4 rounded-xl mb-4">
+                <p class="text-xs text-gray-400 mb-2">Участники:</p>
+                <div id="jackpot-participants" class="space-y-1 max-h-32 overflow-y-auto">
+                    <p class="text-xs text-gray-500">Пока никого...</p>
+                </div>
+            </div>
+            
+            <input type="number" id="jackpot-bet-amount" placeholder="СУММА СТАВКИ (мин. 1000)" class="bet-input" min="1000">
+            <div class="grid grid-cols-4 gap-2 mb-6">
+                <button onclick="setQuickBetJackpot(1000)" class="quick-bet-btn">1K</button>
+                <button onclick="setQuickBetJackpot(5000)" class="quick-bet-btn">5K</button>
+                <button onclick="setQuickBetJackpot(10000)" class="quick-bet-btn">10K</button>
+                <button onclick="setQuickBetJackpot(50000)" class="quick-bet-btn">50K</button>
+            </div>
+            
+            <button onclick="joinJackpot()" class="red-btn w-full py-4 rounded-2xl font-black">ВСТУПИТЬ</button>
+            <p class="text-xs text-gray-400 text-center mt-4">Розыгрыш каждые 5 минут</p>
+        </div>
+    </div>
+
+    <!-- Модальное окно Дуэли -->
+    <div id="duel-modal" class="game-modal-bg hidden">
+        <div class="game-modal">
+            <button onclick="closeDuelModal()" class="absolute top-4 right-4 text-gray-500 text-xl font-black">✕</button>
+            <h2 class="font-black text-2xl text-center text-yellow-600 mb-6 italic">ДУЭЛЬ ⚔️</h2>
+            <p class="text-center text-gray-400 text-sm mb-6">Сразитесь с другом!</p>
+            
+            <div class="space-y-4 mb-6">
+                <input type="text" id="duel-opponent" placeholder="НИК ПРОТИВНИКА" class="w-full p-4 rounded-2xl text-center font-black uppercase bg-black/50 border border-white/10">
+                <input type="number" id="duel-bet-amount" placeholder="СУММА СТАВКИ" class="bet-input" min="100">
+            </div>
+            
+            <div class="grid grid-cols-4 gap-2 mb-6">
+                <button onclick="setQuickBetDuel(100)" class="quick-bet-btn">100</button>
+                <button onclick="setQuickBetDuel(500)" class="quick-bet-btn">500</button>
+                <button onclick="setQuickBetDuel(1000)" class="quick-bet-btn">1K</button>
+                <button onclick="setQuickBetDuel(5000)" class="quick-bet-btn">5K</button>
+            </div>
+            
+            <button onclick="createDuel()" class="yellow-btn w-full py-4 rounded-2xl font-black">СОЗДАТЬ ДУЭЛЬ</button>
+            
+            <div class="mt-6">
+                <p class="text-xs text-gray-400 mb-2">Активные дуэли:</p>
+                <div id="active-duels" class="space-y-2 max-h-40 overflow-y-auto">
+                    <p class="text-xs text-gray-500">Нет активных дуэлей</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Модальное окно ключа -->
     <div id="key-modal" class="fixed inset-0 z-[600] bg-black/98 flex items-center justify-center p-6 hidden">
         <div class="glass p-8 rounded-[40px] w-full max-w-sm text-center border-2 border-yellow-500">
@@ -948,6 +1171,9 @@
             // Запускаем polling для ивентов
             startEventPolling();
             
+            // Обновляем джекпот
+            updateJackpotDisplay();
+            
             // Проверка админ-прав
             if (u.is_admin) {
                 document.getElementById('n-admin').classList.remove('hidden');
@@ -965,6 +1191,19 @@
             
             // Показываем приветственное сообщение
             showRealtimeNotification("Добро пожаловать", `С возвращением, ${u.username}!`, "info");
+        }
+
+        async function updateJackpotDisplay() {
+            const { data } = await sb.from('jackpot_pool').select('*').limit(1).single();
+            if (data && data.amount) {
+                const displayElement = document.getElementById('jackpot-display');
+                if (displayElement) {
+                    displayElement.innerText = (data.amount / 1000).toFixed(0) + 'K BC';
+                }
+            }
+            
+            // Обновляем каждые 30 секунд
+            setTimeout(updateJackpotDisplay, 30000);
         }
 
         async function updateOnlineStatus(online = true) {
@@ -1446,6 +1685,651 @@
                 updateUserStats('loss', betAmount);
                 saveBetHistory('Колесо x10', betAmount, 'loss', 0, 0);
             }
+        }
+
+        // === СЛОТЫ ===
+        let slotsSymbols = ['🍒', '🍋', '🍊', '🍉', '💎', '7️⃣', '⭐'];
+        
+        function openSlotsModal() {
+            document.getElementById('slots-modal').classList.remove('hidden');
+            document.getElementById('slot-1').innerText = '🍒';
+            document.getElementById('slot-2').innerText = '🍒';
+            document.getElementById('slot-3').innerText = '🍒';
+        }
+        
+        function closeSlotsModal() {
+            document.getElementById('slots-modal').classList.add('hidden');
+        }
+        
+        function setQuickBetSlots(amount) {
+            const input = document.getElementById('slots-bet-amount');
+            if (typeof amount === 'number') {
+                input.value = amount;
+            } else if (amount === 'half') {
+                input.value = Math.floor(u.balance / 2);
+            } else if (amount === 'max') {
+                input.value = Math.floor(u.balance * 0.8);
+            } else if (amount === 'all') {
+                input.value = u.balance;
+            } else if (amount === 'clear') {
+                input.value = '';
+            }
+        }
+        
+        async function playSlots() {
+            const betInput = document.getElementById('slots-bet-amount');
+            const betAmount = parseInt(betInput.value);
+            
+            if (!betAmount || betAmount <= 0 || betAmount < 100) {
+                showRealtimeNotification("Ошибка", "Минимальная ставка: 100 BC!", "error");
+                return;
+            }
+            
+            if (betAmount > u.balance) {
+                showRealtimeNotification("Ошибка", "Недостаточно BC!", "error");
+                return;
+            }
+            
+            // Анимация вращения
+            let spins = 15;
+            const spinInterval = setInterval(() => {
+                document.getElementById('slot-1').innerText = slotsSymbols[Math.floor(Math.random() * slotsSymbols.length)];
+                document.getElementById('slot-2').innerText = slotsSymbols[Math.floor(Math.random() * slotsSymbols.length)];
+                document.getElementById('slot-3').innerText = slotsSymbols[Math.floor(Math.random() * slotsSymbols.length)];
+                spins--;
+                if (spins <= 0) {
+                    clearInterval(spinInterval);
+                    finishSlots(betAmount);
+                }
+            }, 100);
+        }
+        
+        async function finishSlots(betAmount) {
+            const s1 = slotsSymbols[Math.floor(Math.random() * slotsSymbols.length)];
+            const s2 = slotsSymbols[Math.floor(Math.random() * slotsSymbols.length)];
+            const s3 = slotsSymbols[Math.floor(Math.random() * slotsSymbols.length)];
+            
+            document.getElementById('slot-1').innerText = s1;
+            document.getElementById('slot-2').innerText = s2;
+            document.getElementById('slot-3').innerText = s3;
+            
+            let multiplier = 0;
+            if (s1 === s2 && s2 === s3) {
+                if (s1 === '7️⃣') multiplier = 50;
+                else if (s1 === '💎') multiplier = 25;
+                else if (s1 === '⭐') multiplier = 15;
+                else multiplier = 10;
+            } else if (s1 === s2 || s2 === s3 || s1 === s3) {
+                multiplier = 2;
+            }
+            
+            if (multiplier > 0) {
+                const winAmount = betAmount * multiplier;
+                await updateData(winAmount - betAmount, 100);
+                showRealtimeNotification("ВЫИГРЫШ!", `x${multiplier}! +${winAmount.toLocaleString()} BC!`, "success");
+                updateUserStats('win', winAmount - betAmount);
+            } else {
+                await updateData(-betAmount, 20);
+                showRealtimeNotification("Попробуйте еще!", `-${betAmount} BC`, "info");
+                updateUserStats('loss', betAmount);
+            }
+        }
+
+        // === БЛЭКДЖЕК ===
+        let bjDeck = [];
+        let bjPlayerHand = [];
+        let bjDealerHand = [];
+        let bjBetAmount = 0;
+        
+        function openBlackjackModal() {
+            document.getElementById('blackjack-modal').classList.remove('hidden');
+        }
+        
+        function closeBlackjackModal() {
+            document.getElementById('blackjack-modal').classList.add('hidden');
+        }
+        
+        function setQuickBetBlackjack(amount) {
+            document.getElementById('blackjack-bet-amount').value = amount;
+        }
+        
+        function createDeck() {
+            const suits = ['♠', '♥', '♦', '♣'];
+            const values = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+            const deck = [];
+            for (let suit of suits) {
+                for (let value of values) {
+                    deck.push({suit, value});
+                }
+            }
+            return deck.sort(() => Math.random() - 0.5);
+        }
+        
+        function getCardValue(card) {
+            if (card.value === 'A') return 11;
+            if (['K','Q','J'].includes(card.value)) return 10;
+            return parseInt(card.value);
+        }
+        
+        function getHandValue(hand) {
+            let value = 0;
+            let aces = 0;
+            for (let card of hand) {
+                value += getCardValue(card);
+                if (card.value === 'A') aces++;
+            }
+            while (value > 21 && aces > 0) {
+                value -= 10;
+                aces--;
+            }
+            return value;
+        }
+        
+        function startBlackjack() {
+            const bet = parseInt(document.getElementById('blackjack-bet-amount').value);
+            if (!bet || bet < 100 || bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Некорректная ставка!", "error");
+                return;
+            }
+            
+            bjBetAmount = bet;
+            bjDeck = createDeck();
+            bjPlayerHand = [bjDeck.pop(), bjDeck.pop()];
+            bjDealerHand = [bjDeck.pop(), bjDeck.pop()];
+            
+            document.getElementById('blackjack-bet-phase').classList.add('hidden');
+            document.getElementById('blackjack-play-phase').classList.remove('hidden');
+            
+            updateBlackjackDisplay(true);
+        }
+        
+        function updateBlackjackDisplay(hideDealer = false) {
+            const playerCards = document.getElementById('player-cards');
+            const dealerCards = document.getElementById('dealer-cards');
+            
+            playerCards.innerHTML = bjPlayerHand.map(c => 
+                `<div class="w-12 h-16 bg-blue-600/20 rounded border border-blue-600 flex items-center justify-center text-sm">${c.value}${c.suit}</div>`
+            ).join('');
+            
+            if (hideDealer) {
+                dealerCards.innerHTML = `
+                    <div class="w-12 h-16 bg-red-600/20 rounded border border-red-600 flex items-center justify-center text-sm">${bjDealerHand[0].value}${bjDealerHand[0].suit}</div>
+                    <div class="w-12 h-16 bg-red-600/20 rounded border border-red-600 flex items-center justify-center">?</div>
+                `;
+                document.getElementById('dealer-score').innerText = 'Счет: ?';
+            } else {
+                dealerCards.innerHTML = bjDealerHand.map(c => 
+                    `<div class="w-12 h-16 bg-red-600/20 rounded border border-red-600 flex items-center justify-center text-sm">${c.value}${c.suit}</div>`
+                ).join('');
+                document.getElementById('dealer-score').innerText = `Счет: ${getHandValue(bjDealerHand)}`;
+            }
+            
+            document.getElementById('player-score').innerText = `Счет: ${getHandValue(bjPlayerHand)}`;
+        }
+        
+        function blackjackHit() {
+            bjPlayerHand.push(bjDeck.pop());
+            updateBlackjackDisplay(true);
+            
+            if (getHandValue(bjPlayerHand) > 21) {
+                endBlackjack('bust');
+            }
+        }
+        
+        function blackjackStand() {
+            while (getHandValue(bjDealerHand) < 17) {
+                bjDealerHand.push(bjDeck.pop());
+            }
+            updateBlackjackDisplay(false);
+            
+            const playerValue = getHandValue(bjPlayerHand);
+            const dealerValue = getHandValue(bjDealerHand);
+            
+            if (dealerValue > 21 || playerValue > dealerValue) {
+                endBlackjack('win');
+            } else if (playerValue === dealerValue) {
+                endBlackjack('push');
+            } else {
+                endBlackjack('loss');
+            }
+        }
+        
+        async function endBlackjack(result) {
+            document.getElementById('blackjack-play-phase').classList.add('hidden');
+            document.getElementById('blackjack-bet-phase').classList.remove('hidden');
+            
+            if (result === 'win') {
+                await updateData(bjBetAmount, 100);
+                showRealtimeNotification("ПОБЕДА!", `+${bjBetAmount.toLocaleString()} BC!`, "success");
+                updateUserStats('win', bjBetAmount);
+            } else if (result === 'bust' || result === 'loss') {
+                await updateData(-bjBetAmount, 20);
+                showRealtimeNotification("ПРОИГРЫШ", `-${bjBetAmount} BC`, "error");
+                updateUserStats('loss', bjBetAmount);
+            } else {
+                showRealtimeNotification("НИЧЬЯ", "Ставка возвращена", "info");
+            }
+        }
+
+        // === МИНЫ ===
+        let minesGrid = [];
+        let minesBet = 0;
+        let minesRevealed = 0;
+        let minesMultiplier = 1.0;
+        let minesActive = false;
+        
+        function openMinesModal() {
+            document.getElementById('mines-modal').classList.remove('hidden');
+        }
+        
+        function closeMinesModal() {
+            document.getElementById('mines-modal').classList.add('hidden');
+        }
+        
+        function setQuickBetMines(amount) {
+            document.getElementById('mines-bet-amount').value = amount;
+        }
+        
+        function startMines() {
+            const bet = parseInt(document.getElementById('mines-bet-amount').value);
+            if (!bet || bet < 100 || bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Некорректная ставка!", "error");
+                return;
+            }
+            
+            minesBet = bet;
+            minesRevealed = 0;
+            minesMultiplier = 1.0;
+            minesActive = true;
+            
+            // Создаем поле 5x5 с 5 минами
+            minesGrid = Array(25).fill(false);
+            const minePositions = [];
+            while (minePositions.length < 5) {
+                const pos = Math.floor(Math.random() * 25);
+                if (!minePositions.includes(pos)) minePositions.push(pos);
+            }
+            minePositions.forEach(pos => minesGrid[pos] = true);
+            
+            renderMinesGrid();
+            document.getElementById('mines-bet-phase').classList.add('hidden');
+            document.getElementById('mines-cashout-btn').classList.remove('hidden');
+            updateMinesDisplay();
+        }
+        
+        function renderMinesGrid() {
+            const grid = document.getElementById('mines-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 25; i++) {
+                const cell = document.createElement('button');
+                cell.className = 'w-12 h-12 bg-black/50 border border-yellow-600/30 rounded-lg font-black text-xl';
+                cell.onclick = () => revealMinesCell(i, cell);
+                cell.id = `mine-cell-${i}`;
+                grid.appendChild(cell);
+            }
+        }
+        
+        function revealMinesCell(index, cell) {
+            if (!minesActive || cell.classList.contains('revealed')) return;
+            
+            cell.classList.add('revealed');
+            
+            if (minesGrid[index]) {
+                // Мина!
+                cell.innerText = '💣';
+                cell.classList.add('bg-red-600/50');
+                endMines(false);
+            } else {
+                // Безопасно
+                cell.innerText = '💎';
+                cell.classList.add('bg-green-600/50');
+                minesRevealed++;
+                minesMultiplier = 1 + (minesRevealed * 0.4);
+                updateMinesDisplay();
+            }
+        }
+        
+        function updateMinesDisplay() {
+            document.getElementById('mines-multiplier').innerText = minesMultiplier.toFixed(2) + 'x';
+            document.getElementById('mines-revealed').innerText = minesRevealed;
+        }
+        
+        async function cashoutMines() {
+            if (!minesActive || minesRevealed === 0) return;
+            endMines(true);
+        }
+        
+        async function endMines(cashout) {
+            minesActive = false;
+            document.getElementById('mines-cashout-btn').classList.add('hidden');
+            document.getElementById('mines-bet-phase').classList.remove('hidden');
+            
+            // Показываем все мины
+            for (let i = 0; i < 25; i++) {
+                const cell = document.getElementById(`mine-cell-${i}`);
+                if (minesGrid[i] && !cell.classList.contains('revealed')) {
+                    cell.innerText = '💣';
+                    cell.classList.add('bg-red-600/20');
+                }
+            }
+            
+            if (cashout) {
+                const winAmount = Math.floor(minesBet * minesMultiplier);
+                await updateData(winAmount - minesBet, 100);
+                showRealtimeNotification("ВЫИГРЫШ!", `x${minesMultiplier.toFixed(2)}! +${(winAmount - minesBet).toLocaleString()} BC!`, "success");
+                updateUserStats('win', winAmount - minesBet);
+            } else {
+                await updateData(-minesBet, 20);
+                showRealtimeNotification("ВЗРЫВ!", `-${minesBet} BC`, "error");
+                updateUserStats('loss', minesBet);
+            }
+        }
+
+        // === БАШНЯ ===
+        let towerFloor = 0;
+        let towerBet = 0;
+        let towerMultiplier = 1.0;
+        let towerActive = false;
+        let towerCorrectDoor = 0;
+        
+        function openTowerModal() {
+            document.getElementById('tower-modal').classList.remove('hidden');
+        }
+        
+        function closeTowerModal() {
+            document.getElementById('tower-modal').classList.add('hidden');
+        }
+        
+        function setQuickBetTower(amount) {
+            document.getElementById('tower-bet-amount').value = amount;
+        }
+        
+        function startTower() {
+            const bet = parseInt(document.getElementById('tower-bet-amount').value);
+            if (!bet || bet < 100 || bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Некорректная ставка!", "error");
+                return;
+            }
+            
+            towerBet = bet;
+            towerFloor = 0;
+            towerMultiplier = 1.0;
+            towerActive = true;
+            
+            document.getElementById('tower-bet-phase').classList.add('hidden');
+            document.getElementById('tower-cashout-btn').classList.remove('hidden');
+            
+            nextTowerFloor();
+        }
+        
+        function nextTowerFloor() {
+            towerFloor++;
+            towerCorrectDoor = Math.floor(Math.random() * 3);
+            renderTowerFloor();
+            updateTowerDisplay();
+        }
+        
+        function renderTowerFloor() {
+            const grid = document.getElementById('tower-grid');
+            grid.innerHTML = `
+                <div class="text-center text-sm text-purple-500 mb-2">Этаж ${towerFloor}</div>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="chooseTowerDoor(0)" class="bg-black/50 border border-purple-600/30 rounded-lg py-6 font-black text-2xl">🚪</button>
+                    <button onclick="chooseTowerDoor(1)" class="bg-black/50 border border-purple-600/30 rounded-lg py-6 font-black text-2xl">🚪</button>
+                    <button onclick="chooseTowerDoor(2)" class="bg-black/50 border border-purple-600/30 rounded-lg py-6 font-black text-2xl">🚪</button>
+                </div>
+            `;
+        }
+        
+        function chooseTowerDoor(door) {
+            if (!towerActive) return;
+            
+            if (door === towerCorrectDoor) {
+                // Правильная дверь
+                towerMultiplier *= 1.5;
+                updateTowerDisplay();
+                
+                if (towerFloor >= 10) {
+                    endTower(true);
+                } else {
+                    showRealtimeNotification("Верно!", "Поднимаемся выше!", "success");
+                    nextTowerFloor();
+                }
+            } else {
+                // Неправильная дверь
+                endTower(false);
+            }
+        }
+        
+        function updateTowerDisplay() {
+            document.getElementById('tower-floor').innerText = towerFloor;
+            document.getElementById('tower-multiplier').innerText = towerMultiplier.toFixed(2) + 'x';
+        }
+        
+        async function cashoutTower() {
+            if (!towerActive || towerFloor === 0) return;
+            endTower(true);
+        }
+        
+        async function endTower(win) {
+            towerActive = false;
+            document.getElementById('tower-cashout-btn').classList.add('hidden');
+            document.getElementById('tower-bet-phase').classList.remove('hidden');
+            document.getElementById('tower-grid').innerHTML = '';
+            
+            if (win) {
+                const winAmount = Math.floor(towerBet * towerMultiplier);
+                await updateData(winAmount - towerBet, 150);
+                showRealtimeNotification("ПОБЕДА!", `Этаж ${towerFloor}! x${towerMultiplier.toFixed(2)}! +${(winAmount - towerBet).toLocaleString()} BC!`, "success");
+                updateUserStats('win', winAmount - towerBet);
+            } else {
+                await updateData(-towerBet, 20);
+                showRealtimeNotification("ПАДЕНИЕ!", `Этаж ${towerFloor}. -${towerBet} BC`, "error");
+                updateUserStats('loss', towerBet);
+            }
+        }
+
+        // === PLINKO ===
+        function openPlinkoModal() {
+            document.getElementById('plinko-modal').classList.remove('hidden');
+        }
+        
+        function closePlinkoModal() {
+            document.getElementById('plinko-modal').classList.add('hidden');
+        }
+        
+        function setQuickBetPlinko(amount) {
+            document.getElementById('plinko-bet-amount').value = amount;
+        }
+        
+        async function playPlinko() {
+            const bet = parseInt(document.getElementById('plinko-bet-amount').value);
+            if (!bet || bet < 100 || bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Некорректная ставка!", "error");
+                return;
+            }
+            
+            // Симуляция падения шара
+            const multipliers = [50, 10, 5, 2, 1, 2, 5, 10, 50];
+            const weights = [1, 3, 10, 20, 32, 20, 10, 3, 1]; // Вероятности
+            
+            const totalWeight = weights.reduce((a, b) => a + b, 0);
+            let random = Math.random() * totalWeight;
+            let index = 0;
+            
+            for (let i = 0; i < weights.length; i++) {
+                random -= weights[i];
+                if (random <= 0) {
+                    index = i;
+                    break;
+                }
+            }
+            
+            const multiplier = multipliers[index];
+            const winAmount = bet * multiplier;
+            
+            await updateData(winAmount - bet, 80);
+            
+            if (multiplier >= 10) {
+                showRealtimeNotification("ДЖЕКПОТ!", `x${multiplier}! +${(winAmount - bet).toLocaleString()} BC!`, "success");
+                updateUserStats('win', winAmount - bet);
+            } else if (multiplier > 1) {
+                showRealtimeNotification("Выигрыш!", `x${multiplier}! +${(winAmount - bet).toLocaleString()} BC!`, "success");
+                updateUserStats('win', winAmount - bet);
+            } else {
+                showRealtimeNotification("Ничья", "Ставка возвращена", "info");
+            }
+        }
+
+        // === ДЖЕКПОТ ===
+        let jackpotPool = 0;
+        let jackpotParticipants = [];
+        
+        function openJackpotModal() {
+            document.getElementById('jackpot-modal').classList.remove('hidden');
+            loadJackpotData();
+        }
+        
+        function closeJackpotModal() {
+            document.getElementById('jackpot-modal').classList.add('hidden');
+        }
+        
+        function setQuickBetJackpot(amount) {
+            document.getElementById('jackpot-bet-amount').value = amount;
+        }
+        
+        async function loadJackpotData() {
+            const { data } = await sb.from('jackpot_pool').select('*').limit(1).single();
+            if (data) {
+                jackpotPool = data.amount || 0;
+                document.getElementById('jackpot-pool').innerText = jackpotPool.toLocaleString() + ' BC';
+            }
+            
+            const { data: participants } = await sb.from('jackpot_participants').select('*');
+            jackpotParticipants = participants || [];
+            renderJackpotParticipants();
+        }
+        
+        function renderJackpotParticipants() {
+            const container = document.getElementById('jackpot-participants');
+            if (!jackpotParticipants || jackpotParticipants.length === 0) {
+                container.innerHTML = '<p class="text-xs text-gray-500">Пока никого...</p>';
+                return;
+            }
+            
+            container.innerHTML = jackpotParticipants.map(p => 
+                `<div class="flex justify-between text-xs">
+                    <span>${p.username}</span>
+                    <span class="text-yellow-500">${p.bet.toLocaleString()} BC</span>
+                </div>`
+            ).join('');
+        }
+        
+        async function joinJackpot() {
+            const bet = parseInt(document.getElementById('jackpot-bet-amount').value);
+            if (!bet || bet < 1000 || bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Минимальная ставка: 1000 BC!", "error");
+                return;
+            }
+            
+            await updateData(-bet, 50);
+            
+            await sb.from('jackpot_participants').insert([{
+                username: u.username,
+                bet: bet
+            }]);
+            
+            const newPool = jackpotPool + bet;
+            await sb.from('jackpot_pool').upsert([{ id: 1, amount: newPool }]);
+            
+            showRealtimeNotification("Участие принято!", "Удачи в розыгрыше!", "success");
+            loadJackpotData();
+            updateQuestProgress('jackpot_join', 1);
+        }
+
+        // === ДУЭЛЬ ===
+        function openDuelModal() {
+            document.getElementById('duel-modal').classList.remove('hidden');
+            loadActiveDuels();
+        }
+        
+        function closeDuelModal() {
+            document.getElementById('duel-modal').classList.add('hidden');
+        }
+        
+        function setQuickBetDuel(amount) {
+            document.getElementById('duel-bet-amount').value = amount;
+        }
+        
+        async function loadActiveDuels() {
+            const { data } = await sb.from('duels').select('*').eq('status', 'pending');
+            const container = document.getElementById('active-duels');
+            
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p class="text-xs text-gray-500">Нет активных дуэлей</p>';
+                return;
+            }
+            
+            container.innerHTML = data.map(d => 
+                `<div class="bg-black/50 p-3 rounded-lg">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-black">${d.creator}</span>
+                        <span class="text-xs text-yellow-500">${d.bet.toLocaleString()} BC</span>
+                    </div>
+                    ${d.creator !== u.username ? `<button onclick="acceptDuel(${d.id})" class="yellow-btn w-full py-2 rounded-lg text-xs mt-2">ПРИНЯТЬ</button>` : ''}
+                </div>`
+            ).join('');
+        }
+        
+        async function createDuel() {
+            const opponent = document.getElementById('duel-opponent').value.trim();
+            const bet = parseInt(document.getElementById('duel-bet-amount').value);
+            
+            if (!opponent || !bet || bet < 100 || bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Заполните все поля!", "error");
+                return;
+            }
+            
+            await updateData(-bet, 0);
+            
+            await sb.from('duels').insert([{
+                creator: u.username,
+                opponent: opponent,
+                bet: bet,
+                status: 'pending'
+            }]);
+            
+            showRealtimeNotification("Дуэль создана!", "Ожидайте принятия...", "success");
+            loadActiveDuels();
+        }
+        
+        async function acceptDuel(duelId) {
+            const { data: duel } = await sb.from('duels').select('*').eq('id', duelId).single();
+            
+            if (!duel || duel.bet > u.balance) {
+                showRealtimeNotification("Ошибка", "Недостаточно BC!", "error");
+                return;
+            }
+            
+            await updateData(-duel.bet, 0);
+            
+            // Розыгрыш дуэли
+            const winner = Math.random() < 0.5 ? duel.creator : u.username;
+            const winAmount = duel.bet * 2;
+            
+            await sb.from('duels').update({ status: 'completed', winner: winner }).eq('id', duelId);
+            
+            if (winner === u.username) {
+                await updateData(winAmount, 200);
+                showRealtimeNotification("ПОБЕДА В ДУЭЛИ!", `+${winAmount.toLocaleString()} BC!`, "success");
+                updateUserStats('win', duel.bet);
+            } else {
+                showRealtimeNotification("Поражение", `Победил ${winner}`, "error");
+                updateUserStats('loss', duel.bet);
+            }
+            
+            loadActiveDuels();
+            updateQuestProgress('duel_play', 1);
         }
 
         // Функции для истории игр
