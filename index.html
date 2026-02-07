@@ -894,6 +894,72 @@
             </div>
         </section>
 
+        <section id="s-settings" class="section space-y-6">
+            <div class="glass p-6 rounded-[35px]">
+                <h2 class="font-black text-2xl text-center mb-6 italic uppercase text-red-600">НАСТРОЙКИ</h2>
+                
+                <!-- VIP Статус -->
+                <div class="bg-gradient-to-r from-yellow-600 to-orange-600 p-4 rounded-2xl mb-6" id="vip-status-card" style="display:none;">
+                    <p class="text-center text-white font-black">⭐ VIP СТАТУС АКТИВЕН ⭐</p>
+                    <p class="text-center text-xs text-white/80" id="vip-until-text">До: --</p>
+                </div>
+                
+                <!-- Тема -->
+                <div class="mb-6">
+                    <h3 class="font-black text-sm mb-3">🎨 ТЕМА</h3>
+                    <div class="flex gap-2">
+                        <button onclick="setTheme('dark')" id="btn-theme-dark" class="flex-1 bg-black border border-red-600 py-3 rounded-xl font-black text-xs">ТЕМНАЯ</button>
+                        <button onclick="setTheme('light')" id="btn-theme-light" class="flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs">СВЕТЛАЯ</button>
+                    </div>
+                </div>
+                
+                <!-- Звук -->
+                <div class="mb-6">
+                    <h3 class="font-black text-sm mb-3">🔊 ЗВУК</h3>
+                    <div class="flex gap-2">
+                        <button onclick="toggleSound(true)" id="btn-sound-on" class="flex-1 red-btn py-3 rounded-xl font-black text-xs">ВКЛ</button>
+                        <button onclick="toggleSound(false)" id="btn-sound-off" class="flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs">ВЫКЛ</button>
+                    </div>
+                </div>
+                
+                <!-- Уведомления -->
+                <div class="mb-6">
+                    <h3 class="font-black text-sm mb-3">🔔 УВЕДОМЛЕНИЯ</h3>
+                    <div class="flex gap-2">
+                        <button onclick="toggleNotifications(true)" id="btn-notif-on" class="flex-1 red-btn py-3 rounded-xl font-black text-xs">ВКЛ</button>
+                        <button onclick="toggleNotifications(false)" id="btn-notif-off" class="flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs">ВЫКЛ</button>
+                    </div>
+                </div>
+                
+                <!-- Реферальная система -->
+                <div class="mb-6">
+                    <h3 class="font-black text-sm mb-3">💰 РЕФЕРАЛЬНАЯ ПРОГРАММА</h3>
+                    <p class="text-xs text-gray-400 mb-2">Ваш реферальный код:</p>
+                    <div class="flex gap-2 mb-2">
+                        <input type="text" id="referral-code-display" readonly class="flex-1 p-3 rounded-xl text-center font-black bg-black/50 border border-red-600/30">
+                        <button onclick="copyReferralCode()" class="green-btn px-6 rounded-xl font-black">КОПИРОВАТЬ</button>
+                    </div>
+                    <p class="text-xs text-gray-400">За каждого приглашенного друга вы получаете 10,000 BC!</p>
+                </div>
+                
+                <!-- Экспорт статистики -->
+                <div class="mb-6">
+                    <h3 class="font-black text-sm mb-3">📊 ЭКСПОРТ ДАННЫХ</h3>
+                    <button onclick="exportStats()" class="w-full blue-btn py-4 rounded-xl font-black text-xs">ЭКСПОРТИРОВАТЬ СТАТИСТИКУ (JSON)</button>
+                </div>
+                
+                <!-- Колесо фортуны -->
+                <div class="mb-6">
+                    <h3 class="font-black text-sm mb-3">🎰 ЕЖЕДНЕВНОЕ КОЛЕСО ФОРТУНЫ</h3>
+                    <div class="text-center mb-4">
+                        <p class="text-xs text-gray-400 mb-2">Следующее вращение через:</p>
+                        <p id="wheel-timer" class="text-2xl font-black text-yellow-500">00:00:00</p>
+                    </div>
+                    <button onclick="spinWheelOfFortune()" id="spin-wheel-btn" class="w-full yellow-btn py-4 rounded-xl font-black">КРУТИТЬ КОЛЕСО</button>
+                </div>
+            </div>
+        </section>
+
         <section id="s-admin" class="section space-y-6">
             <div class="glass p-8 rounded-[40px] border-t-4 border-red-600 shadow-2xl">
                 <h2 class="font-black text-2xl mb-2 italic text-red-600 uppercase">ADMIN PANEL</h2>
@@ -971,6 +1037,7 @@
         <button onclick="showSection('bank')" id="n-bank" class="p-3 text-xl">🏦</button>
         <button onclick="showSection('social')" id="n-social" class="p-3 text-xl">👥</button>
         <button onclick="showSection('top')" id="n-top" class="p-3 text-xl">🏆</button>
+        <button onclick="showSection('settings')" id="n-settings" class="p-3 text-xl">⚙️</button>
         <button onclick="showSection('admin')" id="n-admin" class="p-3 text-xl hidden">🛡️</button>
     </nav>
 
@@ -1000,6 +1067,21 @@
         let lastActivity = Date.now();
         let pityCounter = {}; // Счетчик неудач для системы гарантии
         const PITY_THRESHOLD = 10; // Гарантированный выигрыш после 10 неудач
+        
+        // Настройки пользователя
+        let userSettings = {
+            darkTheme: true,
+            soundEnabled: true,
+            notificationsEnabled: true
+        };
+        
+        // VIP статус
+        let isVIP = false;
+        let vipUntil = null;
+        
+        // Реферальная система
+        let referralCode = '';
+        let referredBy = null;
 
         // Расширенный список кейсов
         const CASES = [
@@ -1230,6 +1312,7 @@
             loadFriendRequests();
             loadUnreadMessages();
             startQuestsTimer();
+            initializeSettings();
             
             // Показываем приветственное сообщение
             showRealtimeNotification("Добро пожаловать", `С возвращением, ${u.username}!`, "info");
@@ -1343,6 +1426,196 @@
             
             await sb.from('user_stats').update(userStats).eq('username', u.username);
             updateStatsUI();
+        }
+
+        // === НАСТРОЙКИ И ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ===
+        
+        function setTheme(theme) {
+            userSettings.darkTheme = (theme === 'dark');
+            localStorage.setItem('theme', theme);
+            
+            document.getElementById('btn-theme-dark').className = theme === 'dark' 
+                ? 'flex-1 red-btn py-3 rounded-xl font-black text-xs'
+                : 'flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs';
+            document.getElementById('btn-theme-light').className = theme === 'light' 
+                ? 'flex-1 red-btn py-3 rounded-xl font-black text-xs'
+                : 'flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs';
+            
+            if (theme === 'light') {
+                document.body.style.background = '#f5f5f5';
+                document.body.style.color = '#000';
+            } else {
+                document.body.style.background = 'var(--dark)';
+                document.body.style.color = 'white';
+            }
+            
+            showRealtimeNotification("Тема изменена", `Активна ${theme === 'dark' ? 'темная' : 'светлая'} тема`, "info");
+        }
+        
+        function toggleSound(enabled) {
+            userSettings.soundEnabled = enabled;
+            localStorage.setItem('sound', enabled);
+            
+            document.getElementById('btn-sound-on').className = enabled 
+                ? 'flex-1 red-btn py-3 rounded-xl font-black text-xs'
+                : 'flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs';
+            document.getElementById('btn-sound-off').className = !enabled 
+                ? 'flex-1 red-btn py-3 rounded-xl font-black text-xs'
+                : 'flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs';
+            
+            showRealtimeNotification("Звук", `Звук ${enabled ? 'включен' : 'выключен'}`, "info");
+        }
+        
+        function toggleNotifications(enabled) {
+            userSettings.notificationsEnabled = enabled;
+            localStorage.setItem('notifications', enabled);
+            
+            document.getElementById('btn-notif-on').className = enabled 
+                ? 'flex-1 red-btn py-3 rounded-xl font-black text-xs'
+                : 'flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs';
+            document.getElementById('btn-notif-off').className = !enabled 
+                ? 'flex-1 red-btn py-3 rounded-xl font-black text-xs'
+                : 'flex-1 bg-white/10 border border-white/20 py-3 rounded-xl font-black text-xs';
+            
+            showRealtimeNotification("Уведомления", `Уведомления ${enabled ? 'включены' : 'выключены'}`, "info");
+        }
+        
+        function generateReferralCode() {
+            if (!u) return '';
+            return u.username.toUpperCase() + Math.random().toString(36).substr(2, 4).toUpperCase();
+        }
+        
+        function copyReferralCode() {
+            const code = document.getElementById('referral-code-display').value;
+            navigator.clipboard.writeText(code).then(() => {
+                showRealtimeNotification("Скопировано!", "Реферальный код скопирован в буфер обмена", "success");
+            }).catch(() => {
+                showRealtimeNotification("Ошибка", "Не удалось скопировать код", "error");
+            });
+        }
+        
+        async function exportStats() {
+            const statsData = {
+                username: u.username,
+                balance: u.balance,
+                xp: u.xp,
+                level: Math.floor(u.xp / 1000) + 1,
+                stats: userStats,
+                achievements: achievementsData,
+                vip: isVIP,
+                referralCode: referralCode,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(statsData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `blackwin_stats_${u.username}_${Date.now()}.json`;
+            link.click();
+            
+            showRealtimeNotification("Экспорт завершен!", "Статистика сохранена в JSON", "success");
+        }
+        
+        let wheelLastSpin = 0;
+        const WHEEL_COOLDOWN = 24 * 60 * 60 * 1000; // 24 часа
+        
+        async function spinWheelOfFortune() {
+            const now = Date.now();
+            const timeSinceLastSpin = now - wheelLastSpin;
+            
+            if (timeSinceLastSpin < WHEEL_COOLDOWN) {
+                const timeLeft = WHEEL_COOLDOWN - timeSinceLastSpin;
+                const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+                showRealtimeNotification("Недоступно", `Следующее вращение через ${hours}ч`, "error");
+                return;
+            }
+            
+            wheelLastSpin = now;
+            localStorage.setItem('wheel_last_spin_' + u.username, now);
+            
+            // Призы колеса фортуны
+            const prizes = [
+                { name: '100 BC', amount: 100, chance: 30 },
+                { name: '500 BC', amount: 500, chance: 25 },
+                { name: '1,000 BC', amount: 1000, chance: 20 },
+                { name: '5,000 BC', amount: 5000, chance: 15 },
+                { name: '10,000 BC', amount: 10000, chance: 7 },
+                { name: '50,000 BC', amount: 50000, chance: 2 },
+                { name: '100,000 BC', amount: 100000, chance: 1 }
+            ];
+            
+            const random = Math.random() * 100;
+            let cumulative = 0;
+            let prize = prizes[0];
+            
+            for (const p of prizes) {
+                cumulative += p.chance;
+                if (random <= cumulative) {
+                    prize = p;
+                    break;
+                }
+            }
+            
+            await updateData(prize.amount, 50);
+            showRealtimeNotification("КОЛЕСО ФОРТУНЫ!", `Вы выиграли: ${prize.name}!`, "success");
+            updateWheelTimer();
+        }
+        
+        function updateWheelTimer() {
+            const now = Date.now();
+            const timeSinceLastSpin = now - wheelLastSpin;
+            const timeLeft = WHEEL_COOLDOWN - timeSinceLastSpin;
+            
+            if (timeLeft <= 0) {
+                document.getElementById('wheel-timer').textContent = 'ДОСТУПНО!';
+                document.getElementById('spin-wheel-btn').disabled = false;
+                document.getElementById('spin-wheel-btn').classList.remove('opacity-50');
+            } else {
+                const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+                const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+                const seconds = Math.floor((timeLeft % (60 * 1000)) / 1000);
+                document.getElementById('wheel-timer').textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                document.getElementById('spin-wheel-btn').disabled = true;
+                document.getElementById('spin-wheel-btn').classList.add('opacity-50');
+                setTimeout(updateWheelTimer, 1000);
+            }
+        }
+        
+        async function loadVIPStatus() {
+            const { data } = await sb.from('profiles').select('vip_until').eq('username', u.username).single();
+            if (data && data.vip_until) {
+                const vipDate = new Date(data.vip_until);
+                if (vipDate > new Date()) {
+                    isVIP = true;
+                    vipUntil = vipDate;
+                    document.getElementById('vip-status-card').style.display = 'block';
+                    document.getElementById('vip-until-text').textContent = 'До: ' + vipDate.toLocaleDateString();
+                }
+            }
+        }
+        
+        function initializeSettings() {
+            // Загрузить сохраненные настройки
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const savedSound = localStorage.getItem('sound') !== 'false';
+            const savedNotif = localStorage.getItem('notifications') !== 'false';
+            
+            setTheme(savedTheme);
+            toggleSound(savedSound);
+            toggleNotifications(savedNotif);
+            
+            // Установить реферальный код
+            referralCode = generateReferralCode();
+            document.getElementById('referral-code-display').value = referralCode;
+            
+            // Загрузить время последнего вращения колеса
+            wheelLastSpin = parseInt(localStorage.getItem('wheel_last_spin_' + u.username) || '0');
+            updateWheelTimer();
+            
+            // Загрузить VIP статус
+            loadVIPStatus();
         }
 
         async function loadBetHistory() {
